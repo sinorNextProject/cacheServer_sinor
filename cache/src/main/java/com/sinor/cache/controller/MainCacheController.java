@@ -1,14 +1,14 @@
-package com.sinor.cache.main.controller;
+package com.sinor.cache.controller;
 
+import com.sinor.cache.model.MainCacheRequest;
+import com.sinor.cache.model.MainCacheResponse;
+import com.sinor.cache.service.MainCacheService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.main.model.MainCacheRequest;
-import com.sinor.cache.main.model.MainCacheResponse;
-import com.sinor.cache.main.service.MainCacheService;
 import com.sinor.cache.utils.URIUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +65,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 	 */
 	@Override
 	public ResponseEntity<String> postDataReadCache(String path, MultiValueMap<String, String> queryParams,
-		MainCacheRequest body, MultiValueMap<String, String> headers) {
+													MainCacheRequest body, MultiValueMap<String, String> headers) {
 
 		return mainCacheService.postMainPathData(path, URIUtils.encodingUrl(queryParams),
 			body.getRequestBody(), headers);

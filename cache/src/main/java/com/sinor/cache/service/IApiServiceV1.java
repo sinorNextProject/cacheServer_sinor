@@ -1,9 +1,9 @@
-package com.sinor.cache.admin.api.service;
+package com.sinor.cache.service;
+
+import com.sinor.cache.common.admin.AdminException;
+import com.sinor.cache.model.ApiGetResponse;
 
 import java.util.List;
-
-import com.sinor.cache.admin.api.model.ApiGetResponse;
-import com.sinor.cache.common.admin.AdminException;
 
 public interface IApiServiceV1 {
 

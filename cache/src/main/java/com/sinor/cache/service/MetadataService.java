@@ -1,4 +1,4 @@
-package com.sinor.cache.admin.metadata.service;
+package com.sinor.cache.service;
 
 import static com.sinor.cache.common.admin.AdminResponseStatus.*;
 
@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.sinor.cache.model.Metadata;
+import com.sinor.cache.model.MetadataGetResponse;
+import com.sinor.cache.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sinor.cache.admin.metadata.Metadata;
-import com.sinor.cache.admin.metadata.model.MetadataGetResponse;
-import com.sinor.cache.admin.metadata.repository.MetadataRepository;
 import com.sinor.cache.common.admin.AdminException;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;

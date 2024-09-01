@@ -1,15 +1,15 @@
-package com.sinor.cache.admin.api.controller;
+package com.sinor.cache.controller;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import com.sinor.cache.model.ApIGetRequest;
+import com.sinor.cache.model.ApiGetResponse;
+import com.sinor.cache.service.IApiServiceV1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.admin.api.model.ApIGetRequest;
-import com.sinor.cache.admin.api.model.ApiGetResponse;
-import com.sinor.cache.admin.api.service.IApiServiceV1;
 import com.sinor.cache.common.ResponseStatus;
 import com.sinor.cache.common.SuccessResponse;
 

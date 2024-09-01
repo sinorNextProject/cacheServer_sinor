@@ -1,12 +1,12 @@
-package com.sinor.cache.main.service;
+package com.sinor.cache.service;
 
 import java.util.Map;
 
+import com.sinor.cache.model.MainCacheResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
 import com.sinor.cache.common.main.MainException;
-import com.sinor.cache.main.model.MainCacheResponse;
 
 public interface IMainCacheServiceV1 {
 	/**
@@ -65,5 +65,5 @@ public interface IMainCacheServiceV1 {
 	 * @param queryString 각 캐시의 구별을 위한 QueryString
 	 */
 	MainCacheResponse postInCache(String path, MultiValueMap<String, String> queryString,
-		MultiValueMap<String, String> headers) throws MainException;
+								  MultiValueMap<String, String> headers) throws MainException;
 }

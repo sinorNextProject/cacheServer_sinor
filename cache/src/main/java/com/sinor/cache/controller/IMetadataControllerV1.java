@@ -1,4 +1,4 @@
-package com.sinor.cache.admin.metadata.controller;
+package com.sinor.cache.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

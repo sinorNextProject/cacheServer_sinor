@@ -1,11 +1,8 @@
-package com.sinor.cache.admin.api.model;
+package com.sinor.cache.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
-import com.sinor.cache.admin.metadata.model.MetadataGetResponse;
-import com.sinor.cache.main.model.MainCacheResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

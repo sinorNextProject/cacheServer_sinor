@@ -1,10 +1,8 @@
-package com.sinor.cache.admin.metadata.model;
-
+package com.sinor.cache.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sinor.cache.admin.metadata.Metadata;
 
 import lombok.Builder;
 import lombok.Getter;

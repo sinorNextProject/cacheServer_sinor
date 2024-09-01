@@ -1,4 +1,4 @@
-package com.sinor.cache.admin.api.model;
+package com.sinor.cache.model;
 
 import lombok.Getter;
 

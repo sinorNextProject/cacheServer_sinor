@@ -1,8 +1,7 @@
-package com.sinor.cache.admin.metadata.repository;
+package com.sinor.cache.repository;
 
+import com.sinor.cache.model.Metadata;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.sinor.cache.admin.metadata.Metadata;
 
 public interface MetadataRepository extends JpaRepository<Metadata, String> {
 

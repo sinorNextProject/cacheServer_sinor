@@ -1,5 +1,4 @@
-package com.sinor.cache.admin.metadata;
-
+package com.sinor.cache.model;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

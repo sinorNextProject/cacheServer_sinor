@@ -1,4 +1,4 @@
-package com.sinor.cache.admin.api.service;
+package com.sinor.cache.service;
 
 import static com.sinor.cache.common.admin.AdminResponseStatus.*;
 import static java.nio.charset.StandardCharsets.*;
@@ -6,14 +6,13 @@ import static java.nio.charset.StandardCharsets.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sinor.cache.model.ApiGetResponse;
+import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sinor.cache.admin.api.model.ApiGetResponse;
-import com.sinor.cache.admin.metadata.model.MetadataGetResponse;
-import com.sinor.cache.admin.metadata.service.MetadataService;
 import com.sinor.cache.common.admin.AdminException;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;

@@ -1,5 +1,4 @@
-package com.sinor.cache.main.model;
-
+package com.sinor.cache.model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

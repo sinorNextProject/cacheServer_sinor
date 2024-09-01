@@ -1,5 +1,4 @@
-package com.sinor.cache.main.model;
-
+package com.sinor.cache.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

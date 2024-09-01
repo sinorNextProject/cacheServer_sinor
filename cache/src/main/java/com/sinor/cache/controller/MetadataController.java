@@ -1,13 +1,13 @@
-package com.sinor.cache.admin.metadata.controller;
+package com.sinor.cache.controller;
 
+import com.sinor.cache.model.MetadataGetResponse;
+import com.sinor.cache.service.IApiServiceV1;
+import com.sinor.cache.service.IMetadataServiceV1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.admin.api.service.IApiServiceV1;
-import com.sinor.cache.admin.metadata.model.MetadataGetResponse;
-import com.sinor.cache.admin.metadata.service.IMetadataServiceV1;
 import com.sinor.cache.common.ResponseStatus;
 import com.sinor.cache.common.SuccessResponse;
 import com.sinor.cache.utils.JsonToStringConverter;

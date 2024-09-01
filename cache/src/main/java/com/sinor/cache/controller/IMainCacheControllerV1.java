@@ -1,5 +1,6 @@
-package com.sinor.cache.main.controller;
+package com.sinor.cache.controller;
 
+import com.sinor.cache.model.MainCacheRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.sinor.cache.main.model.MainCacheRequest;
 
 // https://www.baeldung.com/jackson-mapping-dynamic-object#using-jsonanysetter
 // 어떤 형태로 요청이 들어오든 json 타입이라는 가정만 있으면 모두 Map<String, Object> 형식으로 저장 가능하다고 생각
@@ -67,6 +66,6 @@ public interface IMainCacheControllerV1 {
 	 */
 	@PutMapping("/{path}")
 	ResponseEntity<String> updateDataRefreshCache(@PathVariable String path,
-		@RequestParam(required = false) MultiValueMap<String, String> queryParams,
-		MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers);
+												  @RequestParam(required = false) MultiValueMap<String, String> queryParams,
+												  MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers);
 }

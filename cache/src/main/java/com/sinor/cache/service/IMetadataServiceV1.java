@@ -1,11 +1,11 @@
-package com.sinor.cache.admin.metadata.service;
+package com.sinor.cache.service;
 
-import java.util.List;
-
+import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.data.domain.PageRequest;
 
-import com.sinor.cache.admin.metadata.model.MetadataGetResponse;
 import com.sinor.cache.common.admin.AdminException;
+
+import java.util.List;
 
 public interface IMetadataServiceV1 {
 	/**

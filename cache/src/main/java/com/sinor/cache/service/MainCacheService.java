@@ -1,7 +1,10 @@
-package com.sinor.cache.main.service;
+package com.sinor.cache.service;
 
 import java.util.Map;
 
+import com.sinor.cache.model.ApiGetResponse;
+import com.sinor.cache.model.MainCacheResponse;
+import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +14,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import com.sinor.cache.admin.api.model.ApiGetResponse;
-import com.sinor.cache.admin.metadata.model.MetadataGetResponse;
-import com.sinor.cache.admin.metadata.service.MetadataService;
 import com.sinor.cache.common.admin.AdminException;
 import com.sinor.cache.common.main.MainException;
 import com.sinor.cache.common.main.MainResponseStatus;
-import com.sinor.cache.main.model.MainCacheResponse;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
 import com.sinor.cache.utils.URIUtils;
@@ -188,7 +187,7 @@ public class MainCacheService implements IMainCacheServiceV1 {
 	 * @return 값이 있다면 value, 없다면 null
 	 */
 	public MainCacheResponse getDataInCache(String path, MultiValueMap<String, String> queryParams,
-		MultiValueMap<String, String> headers) throws AdminException {
+											MultiValueMap<String, String> headers) throws AdminException {
 
 		// metadata 확인
 		// Metadata 조회
