@@ -70,7 +70,7 @@ public class MetadataController implements IMetadataControllerV1 {
 		MetadataGetResponse updatedMetadata = metadataService.updateMetadata(path, newExpiredTime);
 		SuccessResponse<?> adminResponse = SuccessResponse.from(ResponseStatus.SUCCESS, updatedMetadata);
 		// 수정된 Path URL 캐시 목록 삭제
-		apiService.deleteCacheList(updatedMetadata.getMetadataUrl());
+		//apiService.deleteCacheList(updatedMetadata.getMetadataUrl());
 
 		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(adminResponse);
 	}

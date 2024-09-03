@@ -17,7 +17,7 @@ public interface IApiServiceV1 {
 	 * 패턴과 일치하는 캐시 조회
 	 * @param pattern 조회할 캐시들의 공통 패턴
 	 */
-	List<ApiGetResponse> findCacheList(String pattern) throws AdminException;
+	//List<ApiGetResponse> findCacheList(String pattern) throws AdminException;
 
 	/**
 	 * 캐시 생성 및 덮어쓰기
@@ -37,7 +37,7 @@ public interface IApiServiceV1 {
 	 * 패턴과 일치하는 캐시 삭제
 	 * @param pattern 삭제할 캐시들의 공통 패턴
 	 */
-	void deleteCacheList(String pattern) throws AdminException;
+	// void deleteCacheList(String pattern) throws AdminException;
 
 	ApiGetResponse updateCacheById(String key, String response);
 }

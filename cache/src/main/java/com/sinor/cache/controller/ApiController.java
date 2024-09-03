@@ -48,12 +48,12 @@ public class ApiController implements IApiControllerV1 {
 	 * @param url 조회할 캐시들의 공통 url 값
 	 */
 
-	@Override
+	/*@Override
 	public ResponseEntity<SuccessResponse<?>> getCacheListByKeyParams(String url) {
 		SuccessResponse<?> adminResponse = SuccessResponse.from(ResponseStatus.SUCCESS,
 			apiService.findCacheList(url));
 		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(adminResponse);
-	}
+	}*/
 
 	/**
 	 * 단일 캐시 삭제
@@ -71,11 +71,11 @@ public class ApiController implements IApiControllerV1 {
 		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(apiService.deleteCacheById(encodingKey));
 	}
 
-	@Override
+	/*@Override
 	public ResponseEntity<?> deleteCacheList(String url) {
 		apiService.deleteCacheList(url);
 		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body("삭제 성공");
-	}
+	}*/
 
 	@Override
 	public ResponseEntity<?> updateCache(ApIGetRequest request) {

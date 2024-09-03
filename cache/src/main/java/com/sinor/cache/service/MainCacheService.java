@@ -31,16 +31,15 @@ public class MainCacheService implements IMainCacheServiceV1 {
 	private final WebClient webClient;
 	private final MetadataService metadataService;
 	private final JsonToStringConverter jsonToStringConverter;
-	private final RedisUtils responseRedisUtils;
+	private final RedisUtils defaultRedisUtils;
 
 	@Autowired
 	public MainCacheService(WebClient webClient, MetadataService metadataService,
-		JsonToStringConverter jsonToStringConverter,
-		RedisUtils responseRedisUtils) {
+		JsonToStringConverter jsonToStringConverter, RedisUtils defaultRedisUtils) {
 		this.webClient = webClient;
 		this.metadataService = metadataService;
 		this.jsonToStringConverter = jsonToStringConverter;
-		this.responseRedisUtils = responseRedisUtils;
+		this.defaultRedisUtils = defaultRedisUtils;
 	}
 
 	/**
@@ -200,11 +199,11 @@ public class MainCacheService implements IMainCacheServiceV1 {
 		String key = URIUtils.getResponseKey(path, queryParams, metadata.getVersion());
 
 		// response 확인
-		if (!responseRedisUtils.isExist(key))
+		if (!defaultRedisUtils.isExist(key))
 			return null;
 
 		// response 조회
-		ApiGetResponse cachedData = jsonToStringConverter.jsontoClass(responseRedisUtils.getRedisData(key),
+		ApiGetResponse cachedData = jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key),
 			ApiGetResponse.class);
 
 		return cachedData.getResponse();
@@ -234,7 +233,7 @@ public class MainCacheService implements IMainCacheServiceV1 {
 		// path + queryString + metadata version 형태의 Key 이름 생성
 		String cacheKeyName = URIUtils.getResponseKey(path, queryParams, metadata.getVersion());
 		// 캐시 저장
-		responseRedisUtils.setRedisData(cacheKeyName, response, metadata.getMetadataTtlSecond());
+		defaultRedisUtils.setRedisData(cacheKeyName, response, metadata.getMetadataTtlSecond());
 
 		// Response만 반환
 		return mainCacheResponse;

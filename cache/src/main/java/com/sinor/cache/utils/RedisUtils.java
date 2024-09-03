@@ -14,6 +14,10 @@ import org.springframework.data.redis.core.ScanOptions;
 
 import com.sinor.cache.common.admin.AdminException;
 
+/**
+ * RedisTemplate을 사용할 때 관련 Exception 처리를 해놓은 클래스
+ * 에러를 각 장소에 일일이 처리할 것이라면 굳이 사용할 필요는 없음
+ */
 public class RedisUtils {
 	private final RedisTemplate<String, String> redisTemplate;
 

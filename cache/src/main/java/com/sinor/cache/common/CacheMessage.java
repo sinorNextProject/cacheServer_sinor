@@ -1,3 +1,4 @@
+/*
 package com.sinor.cache.common;
 
 import java.util.ArrayList;
@@ -13,27 +14,33 @@ import com.sinor.cache.utils.RedisUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
+*/
 /**
  * Redis 메시지가 감지 됬을 때 이벤트를 처리할 메소드
- */
+ *//*
+
 @Service
 @Slf4j
 public class CacheMessage implements MessageListener {
-	private final RedisUtils cacheListRedisUtils;
+	//private final RedisUtils cacheListRedisUtils;
 	private final JsonToStringConverter jsonToStringConverter;
 
 	@Autowired
-	public CacheMessage(@Qualifier("cacheListRedisUtils") RedisUtils cacheListRedisUtils,
+	public CacheMessage(*/
+/*@Qualifier("cacheListRedisUtils") RedisUtils cacheListRedisUtils,*//*
+
 		JsonToStringConverter jsonToStringConverter) {
-		this.cacheListRedisUtils = cacheListRedisUtils;
+		//this.cacheListRedisUtils = cacheListRedisUtils;
 		this.jsonToStringConverter = jsonToStringConverter;
 	}
 
-	/**
+	*/
+/**
 	 * Redis 메세지 수신 시 실행 이벤트
 	 * @param message message must not be {@literal null}.
 	 * @param pattern pattern matching the channel (if specified) - can be {@literal null}.
-	 */
+	 *//*
+
 	//TODO SET에 대한 redis 메시지 발행을 위한 conf 설정이 시간 관계로 EA로 설정되어 있음 차후 효율성있는 설정으로 변경 필요
 	//TODO SET에 대한 메시지를 추가한 이유는 ApiController에서 path별 활성화된 캐시들의 조회와 삭제를 효율성 있게 하기 위해서 인데 시간부족으로 미작성
 	@Override
@@ -112,12 +119,14 @@ public class CacheMessage implements MessageListener {
 		cacheListRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(list));
 	}
 
-	/**
+	*/
+/**
 	 * key에서 metadata version 부분 제거
-	 */
+	 *//*
+
 	private String splitKeyVersion(String key){
 		int index = key.lastIndexOf("/V");
 		String uri = key.substring(0, index);
 		return uri;
 	}
-}
+}*/
