@@ -22,8 +22,8 @@ public interface IApiControllerV1 {
 	 * URL 별 캐시 목록 조회
 	 * @param url 조회할 캐시들의 공통 url 값
 	 */
-	@GetMapping("/admin/cache/list")
-	ResponseEntity<SuccessResponse<?>> getCacheListByKeyParams(@RequestParam String url);
+	/*@GetMapping("/admin/cache/list")
+	ResponseEntity<SuccessResponse<?>> getCacheListByKeyParams(@RequestParam String url);*/
 
 	/**
 	 * 단일 캐시 삭제
@@ -32,8 +32,8 @@ public interface IApiControllerV1 {
 	@DeleteMapping("/admin/cache")
 	ResponseEntity<?> deleteCache(@RequestParam String key);
 
-	@DeleteMapping("/admin/cache/list")
-	ResponseEntity<?> deleteCacheList(@RequestParam String url);
+	/*@DeleteMapping("/admin/cache/list")
+	ResponseEntity<?> deleteCacheList(@RequestParam String url);*/
 
 	/**
 	 *

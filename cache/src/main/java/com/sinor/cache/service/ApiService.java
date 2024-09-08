@@ -26,17 +26,17 @@ import lombok.extern.slf4j.Slf4j;
 public class ApiService implements IApiServiceV1 {
 
 	private final JsonToStringConverter jsonToStringConverter;
-	private final RedisUtils cacheListRedisUtils;
+//	private final RedisUtils cacheListRedisUtils;
 	private final MetadataService metadataService;
-	private final RedisUtils responseRedisUtils;
+	private final RedisUtils defaultRedisUtils;
 
 	@Autowired
 	public ApiService(MetadataService metadataService, JsonToStringConverter jsonToStringConverter,
-		RedisUtils cacheListRedisUtils, RedisUtils responseRedisUtils) {
+					  RedisUtils defaultRedisUtils) {
 		this.metadataService = metadataService;
-		this.cacheListRedisUtils = cacheListRedisUtils;
+		//this.cacheListRedisUtils = cacheListRedisUtils;
 		this.jsonToStringConverter = jsonToStringConverter;
-		this.responseRedisUtils = responseRedisUtils;
+		this.defaultRedisUtils = defaultRedisUtils;
 	}
 
 	/**
@@ -45,7 +45,14 @@ public class ApiService implements IApiServiceV1 {
 	 */
 	public ApiGetResponse findCacheById(String key) throws AdminException {
 
+<<<<<<< HEAD
 		String value = responseRedisUtils.getRedisData(key);
+=======
+		String versionKey = URIUtils.getUriPathQuery(key,
+			metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key)).getVersion());
+
+		String value = defaultRedisUtils.getRedisData(versionKey);
+>>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 		if (value.isBlank())
 			throw new AdminException(CACHE_NOT_FOUND);
 
@@ -56,19 +63,19 @@ public class ApiService implements IApiServiceV1 {
 	 * path의 활성 캐시 목록 조회
 	 * @param path 조회할 캐시들의 path
 	 */
-	@Override
+	/*@Override
 	// 활성 캐시가 비어있을 경우 빈 리스트를 반환하도록 설정되어 있음, 에러 처리를 할 거면 mgetRedisData에서 처리할 것.
 	public List<ApiGetResponse> findCacheList(String path) throws AdminException {
 		// path의 활성 캐시 목록 조회 및 최신 버전 값 붙이기
 		ArrayList<String> uriList = jsonToStringConverter.jsontoClass(cacheListRedisUtils.getRedisData(path), ArrayList.class);
 		
 		// 활성 캐시들의 response 조회 및 ApiGetResponse 역직렬화
-		List<ApiGetResponse> response = responseRedisUtils.mgetRedisData(uriList).stream().map(
+		List<ApiGetResponse> response = defaultRedisUtils.mgetRedisData(uriList).stream().map(
 			value -> jsonToStringConverter.jsontoClass(value, ApiGetResponse.class)
 		).toList();
 
 		return response;
-	}
+	}*/
 
 	/**
 	 * 캐시 생성 및 덮어쓰기
@@ -79,12 +86,19 @@ public class ApiService implements IApiServiceV1 {
 	@Override
 	@Transactional
 	public ApiGetResponse saveOrUpdate(String key, String value, Long expiredTime) throws AdminException {
+<<<<<<< HEAD
 
+=======
+		// path 추출, 해당 path의 metadata 조회
+		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));
+		// 조회한 값을 이용한 Versioning 된 Cache Name 추출
+		key = URIUtils.getUriPathQuery(key, metadata.getVersion());
+>>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 
 		// 캐시에 저장된 값이 있으면 수정, 없으면 생성
-		responseRedisUtils.setRedisData(key, value, expiredTime);
+		defaultRedisUtils.setRedisData(key, value, expiredTime);
 
-		return jsonToStringConverter.jsontoClass(responseRedisUtils.getRedisData(key), ApiGetResponse.class);
+		return jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key), ApiGetResponse.class);
 	}
 
 	/**
@@ -94,24 +108,32 @@ public class ApiService implements IApiServiceV1 {
 	@Override
 	public Boolean deleteCacheById(String key) throws AdminException {
 
+<<<<<<< HEAD
 		log.info("value of deleted key: " + responseRedisUtils.getRedisData(key));
 		return responseRedisUtils.deleteCache(key);
+=======
+		String versionKey = URIUtils.getUriPathQuery(key,
+			metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key)).getVersion());
+
+		log.info("value of deleted key: " + defaultRedisUtils.getRedisData(versionKey));
+		return defaultRedisUtils.deleteCache(versionKey);
+>>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 	}
 
 	/**
 	 * URI별 활성 캐시 리스트 삭제
 	 * @param path 삭제할 캐시들의 공통 path
 	 */
-	@Override
+	/*@Override
 	public void deleteCacheList(String path) throws AdminException {
 		// path의 활성 캐시 목록 조회
 		ArrayList<String> uriList = jsonToStringConverter.jsontoClass(cacheListRedisUtils.getRedisData(path), ArrayList.class);
 
 		// 조회한 목록 삭제
-		Long count = responseRedisUtils.deleteCache(uriList);
+		Long count = defaultRedisUtils.deleteCache(uriList);
 
 		log.info(path + " 활성 캐시 " + count + "개 삭제");
-	}
+	}*/
 
 	/**
 	 *
@@ -123,16 +145,22 @@ public class ApiService implements IApiServiceV1 {
 	@Override
 	public ApiGetResponse updateCacheById(String key, String response) {
 		// path 추출, 해당 path의 metadata 조회
+<<<<<<< HEAD
 		MetadataGetResponse metadata = metadataService.findMetadataById(responseRedisUtils.disuniteKey(key));
+=======
+		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));
+		// 조회한 값을 이용한 Versioning 된 Cache Name 추출
+		key = URIUtils.getUriPathQuery(key, metadata.getVersion());
+>>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 
-		if (responseRedisUtils.isExist(key)) {
+		if (defaultRedisUtils.isExist(key)) {
 
 			// 추출한 Metadata ttl 값으로 캐시 데이터와 변경
-			responseRedisUtils.setRedisData(key, response,
+			defaultRedisUtils.setRedisData(key, response,
 				metadata.getMetadataTtlSecond());
 
 			// 변경한 데이터를 추출하여 ApiGetResponse 반환
-			return jsonToStringConverter.jsontoClass(responseRedisUtils.getRedisData(key), ApiGetResponse.class);
+			return jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key), ApiGetResponse.class);
 		}
 
 		throw new AdminException(CACHE_NOT_FOUND);
@@ -149,7 +177,7 @@ public class ApiService implements IApiServiceV1 {
 			byte[] keyBytes = cursor.next();
 			String key = new String(keyBytes, UTF_8);
 
-			String jsonValue = responseRedisUtils.getRedisData(key);
+			String jsonValue = defaultRedisUtils.getRedisData(key);
 			list.add(jsonToStringConverter.jsontoClass(jsonValue, ApiGetResponse.class));
 		}
 	}

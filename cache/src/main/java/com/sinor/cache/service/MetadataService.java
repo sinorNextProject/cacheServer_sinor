@@ -1,24 +1,22 @@
 package com.sinor.cache.service;
 
-import static com.sinor.cache.common.admin.AdminResponseStatus.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import com.sinor.cache.common.admin.AdminException;
 import com.sinor.cache.model.Metadata;
 import com.sinor.cache.model.MetadataGetResponse;
 import com.sinor.cache.repository.MetadataRepository;
+import com.sinor.cache.utils.JsonToStringConverter;
+import com.sinor.cache.utils.RedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sinor.cache.common.admin.AdminException;
-import com.sinor.cache.utils.JsonToStringConverter;
-import com.sinor.cache.utils.RedisUtils;
+import java.util.List;
+import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.sinor.cache.common.admin.AdminResponseStatus.METADATA_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -28,15 +26,15 @@ public class MetadataService implements IMetadataServiceV1 {
 	private final JsonToStringConverter jsonToStringConverter;
 
 	private final RedisUtils metadataRedisUtils;
-	private final RedisUtils cacheListRedisUtils;
+	//private final RedisUtils cacheListRedisUtils;
 
 	@Autowired
 	public MetadataService(MetadataRepository optionRepository, JsonToStringConverter jsonToStringConverter,
-		RedisUtils metadataRedisUtils, RedisUtils cacheListRedisUtils) {
+						   @Qualifier("metadataRedisUtils") RedisUtils metadataRedisUtils) {
 		this.metadataRepository = optionRepository;
 		this.jsonToStringConverter = jsonToStringConverter;
 		this.metadataRedisUtils = metadataRedisUtils;
-		this.cacheListRedisUtils = cacheListRedisUtils;
+		//this.cacheListRedisUtils = cacheListRedisUtils;
 	}
 
 	/**
@@ -128,9 +126,9 @@ public class MetadataService implements IMetadataServiceV1 {
 		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(saveMetadata));
 
 		// 활성 캐시 목록 초기화
-		ArrayList<String> list = jsonToStringConverter.jsontoClass(cacheListRedisUtils.getRedisData(path), ArrayList.class);
+		/*ArrayList<String> list = jsonToStringConverter.jsontoClass(cacheListRedisUtils.getRedisData(path), ArrayList.class);
 		list.clear();
-		cacheListRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(list));
+		cacheListRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(list));*/
 
 		// response 반환
 		return MetadataGetResponse.from(saveMetadata);
