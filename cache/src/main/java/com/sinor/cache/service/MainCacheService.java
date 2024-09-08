@@ -197,7 +197,7 @@ public class MainCacheService implements IMainCacheServiceV1 {
 			return null;
 
 		// URI 조합
-		String key = URIUtils.getResponseKey(path, queryParams, metadata.getVersion());
+		String key = URIUtils.getResponseKey(path, queryParams);
 
 		// response 확인
 		if (!responseRedisUtils.isExist(key))
@@ -232,7 +232,7 @@ public class MainCacheService implements IMainCacheServiceV1 {
 		String response = jsonToStringConverter.objectToJson(apiGetResponse);
 
 		// path + queryString + metadata version 형태의 Key 이름 생성
-		String cacheKeyName = URIUtils.getResponseKey(path, queryParams, metadata.getVersion());
+		String cacheKeyName = URIUtils.getResponseKey(path, queryParams);
 		// 캐시 저장
 		responseRedisUtils.setRedisData(cacheKeyName, response, metadata.getMetadataTtlSecond());
 

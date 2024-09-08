@@ -22,13 +22,13 @@ public class URIUtils {
 		return builder;
 	}
 
-	public static String getResponseKey(String path, MultiValueMap<String, String> queryParams, int version) {
+	public static String getResponseKey(String path, MultiValueMap<String, String> queryParams) {
 		UriComponentsBuilder uriComponents = UriComponentsBuilder.fromPath(path);
 
 		if (queryParams != null)
 			uriComponents.queryParams(decodingUrl(queryParams));
 
-		return uriComponents.toUriString() + "/V" + version;
+		return uriComponents.toUriString();
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class URIUtils {
 	 * @param version Metadata Version
 	 * @return key + /V + version
 	 */
-	public static String getUriPathQuery(String key, int version) {
+/*	public static String getUriPathQuery(String key, int version) {
 		return key + "/V" + version;
-	}
+	}*/
 }

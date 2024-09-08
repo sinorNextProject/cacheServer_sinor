@@ -63,13 +63,10 @@ public class CacheMessage implements MessageListener {
 	}
 
 	private void insertCacheList(String key){
-		// response에 대한 key가 넘어오기 때문에 무조건 뒤에 /V, 즉 버전이 붙어서 온다.
-		// 해당 version 값을 지운 uri를 추출한다.
-		String uri = splitKeyVersion(key);
 
 		// 이후 path 값을 추출한다.
-		String path = cacheListRedisUtils.disuniteKey(uri);
-		String queryString = cacheListRedisUtils.getQueryString(uri);
+		String path = cacheListRedisUtils.disuniteKey(key);
+		String queryString = cacheListRedisUtils.getQueryString(key);
 
 		if(queryString.isEmpty())
 			return;
@@ -88,13 +85,10 @@ public class CacheMessage implements MessageListener {
 	}
 
 	private void removeCacheList(String key){
-		// response에 대한 key가 넘어오기 때문에 무조건 뒤에 /V, 즉 버전이 붙어서 온다.
-		// 해당 version 값을 지운 uri를 추출한다.
-		String uri = splitKeyVersion(key);
 
 		// 이후 path, queryString 값을 추출한다.
-		String path = cacheListRedisUtils.disuniteKey(uri);
-		String queryString = cacheListRedisUtils.getQueryString(uri);
+		String path = cacheListRedisUtils.disuniteKey(key);
+		String queryString = cacheListRedisUtils.getQueryString(key);
 
 		if(queryString.isEmpty())
 			return;
@@ -110,14 +104,5 @@ public class CacheMessage implements MessageListener {
 
 		list.remove(key);
 		cacheListRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(list));
-	}
-
-	/**
-	 * key에서 metadata version 부분 제거
-	 */
-	private String splitKeyVersion(String key){
-		int index = key.lastIndexOf("/V");
-		String uri = key.substring(0, index);
-		return uri;
 	}
 }

@@ -123,7 +123,7 @@ public class MetadataService implements IMetadataServiceV1 {
 
 		// 변경 값으로 저장
 		Metadata saveMetadata = metadataRepository.save(
-			Metadata.updateValue(metadata.get().getMetadataUrl(), newExpiredTime, metadata.get().getVersion())
+			Metadata.updateValue(metadata.get().getMetadataUrl(), newExpiredTime)
 		);
 		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(saveMetadata));
 
