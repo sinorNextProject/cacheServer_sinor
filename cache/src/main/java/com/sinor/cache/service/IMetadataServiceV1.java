@@ -3,7 +3,7 @@ package com.sinor.cache.service;
 import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.data.domain.PageRequest;
 
-import com.sinor.cache.common.admin.AdminException;
+import com.sinor.cache.global.admin.AdminException;
 
 import java.util.List;
 

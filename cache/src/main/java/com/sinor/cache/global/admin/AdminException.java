@@ -1,4 +1,4 @@
-package com.sinor.cache.common.admin;
+package com.sinor.cache.global.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

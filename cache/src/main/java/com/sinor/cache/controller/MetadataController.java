@@ -8,8 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.common.ResponseStatus;
-import com.sinor.cache.common.SuccessResponse;
+import com.sinor.cache.global.ResponseStatus;
+import com.sinor.cache.global.SuccessResponse;
 import com.sinor.cache.utils.JsonToStringConverter;
 
 @RestController

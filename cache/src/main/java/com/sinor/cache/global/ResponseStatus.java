@@ -1,4 +1,4 @@
-package com.sinor.cache.common;
+package com.sinor.cache.global;
 
 import lombok.Getter;
 

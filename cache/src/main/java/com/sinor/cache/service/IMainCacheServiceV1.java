@@ -6,7 +6,7 @@ import com.sinor.cache.model.MainCacheResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
-import com.sinor.cache.common.main.MainException;
+import com.sinor.cache.global.main.MainException;
 
 public interface IMainCacheServiceV1 {
 	/**
