@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import com.sinor.cache.global.exception.BaseException;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.KeyScanOptions;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -118,7 +119,7 @@ public class RedisUtils {
 	 * @param keys 조회할 키들의 List
 	 * @return keys의 Value List
 	 */
-	public List<String> mgetRedisData(List<String> keys) throws AdminException{
+	public List<String> mgetRedisData(List<String> keys) throws BaseException{
 		List<String> list = redisTemplate.opsForValue().multiGet(keys);
 
 		// 비었으면 빈 List 반환
@@ -128,7 +129,7 @@ public class RedisUtils {
 		return list;
 	}
 
-	public Boolean deleteCache(String key) throws AdminException {
+	public Boolean deleteCache(String key) throws BaseException {
 		return redisTemplate.delete(key);
 	}
 
@@ -136,7 +137,7 @@ public class RedisUtils {
 		return redisTemplate.delete(keys);
 	}
 
-	public void unlinkCache(String key) throws AdminException {
+	public void unlinkCache(String key) throws BaseException {
 		redisTemplate.unlink(key);
 	}
 }

@@ -1,5 +1,7 @@
 package com.sinor.cache.service;
 
+import com.sinor.cache.global.exception.BaseException;
+import com.sinor.cache.global.exception.BaseStatus;
 import com.sinor.cache.global.exception.notuse.admin.AdminException;
 import com.sinor.cache.model.Metadata;
 import com.sinor.cache.model.MetadataGetResponse;
@@ -21,7 +23,7 @@ import static com.sinor.cache.global.exception.notuse.admin.AdminResponseStatus.
 @Slf4j
 @Service
 @Transactional
-public class MetadataService implements IMetadataServiceV1 {
+public class MetadataService {
 	private final MetadataRepository metadataRepository;
 	private final JsonToStringConverter jsonToStringConverter;
 
@@ -41,8 +43,7 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * 옵션 조회 없으면 기본 10분 생성 후 반환
 	 * @param path 조회할 옵션의 path
 	 */
-	@Override
-	public MetadataGetResponse findOrCreateMetadataById(String path) throws AdminException {
+	public MetadataGetResponse findOrCreateMetadataById(String path) throws BaseException {
 		// 캐시 검사
 		MetadataGetResponse metadataGetResponse = findMetadataCacheById(path);
 
@@ -64,24 +65,23 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * @param path 조회할 캐시의 path
 	 * @return metadata cache value OR null
 	 */
-	@Override
-	public MetadataGetResponse findMetadataCacheById(String path) throws AdminException {
+	public MetadataGetResponse findMetadataCacheById(String path) throws BaseException {
 		// 캐시 검사
-		if (metadataRedisUtils.isExist(path)) {
-			Metadata cacheMetadata = jsonToStringConverter.jsontoClass(metadataRedisUtils.getRedisData(path),
-				Metadata.class);
-			return MetadataGetResponse.from(cacheMetadata);
-		}
+		if(!metadataRedisUtils.isExist(path))
+			throw new BaseException(BaseStatus.NOT_FOUND, path + "에 대한 Metadata를 찾을 수 없습니다.");
 
-		return null;
+		// 캐시 호출 및 역직렬화
+		Metadata cacheMetadata = jsonToStringConverter.jsontoClass(metadataRedisUtils.getRedisData(path),
+				Metadata.class);
+
+		return MetadataGetResponse.from(cacheMetadata);
 	}
 
 	/**
 	 * 옵션 조회 없으면 예외 발생
 	 * @param path 조회할 옵션의 path
 	 */
-	@Override
-	public MetadataGetResponse findMetadataById(String path) throws AdminException {
+	public MetadataGetResponse findMetadataById(String path) throws BaseException {
 		// 캐시 검사
 		MetadataGetResponse metadataGetResponse = findMetadataCacheById(path);
 
@@ -107,8 +107,7 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * @param path 옵션 변경할 path 값
 	 * @param newExpiredTime 새로 적용할 만료시간
 	 */
-	@Override
-	public MetadataGetResponse updateMetadata(String path, Long newExpiredTime) throws AdminException {
+	public MetadataGetResponse updateMetadata(String path, Long newExpiredTime) throws BaseException {
 
 		// 해당 url 유무 파악
 		long startTime = System.currentTimeMillis();
@@ -117,11 +116,11 @@ public class MetadataService implements IMetadataServiceV1 {
 		System.out.println("조회 종료 : " + (endTime - startTime) + "밀리초");
 
 		if (metadata.isEmpty())
-			throw new AdminException(METADATA_NOT_FOUND);
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 metadata가 없습니다.");
 
 		// 변경 값으로 저장
 		Metadata saveMetadata = metadataRepository.save(
-			Metadata.updateValue(metadata.get().getMetadataUrl(), newExpiredTime, metadata.get().getVersion())
+			Metadata.createValue(metadata.get().getMetadataUrl(), newExpiredTime)
 		);
 		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(saveMetadata));
 
@@ -138,11 +137,10 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * 옵션 삭제
 	 * @param path 삭제할 path
 	 */
-	@Override
-	public void deleteMetadataById(String path) throws AdminException {
+	public void deleteMetadataById(String path) throws BaseException {
 		// 유무 파악
 		if (!metadataRepository.existsById(path))
-			throw new AdminException(METADATA_NOT_FOUND);
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 Metadata가 없어 삭제할 수 없습니다.");
 
 		// 캐시 삭제
 		metadataRepository.deleteById(path);
@@ -154,11 +152,10 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * @param path 생성할 path 값
 	 * @param expiredTime 적용할 만료시간
 	 */
-	@Override
-	public MetadataGetResponse createMetadata(String path, Long expiredTime) throws AdminException {
+	public MetadataGetResponse createMetadata(String path, Long expiredTime) throws BaseException {
 		// url 옵션이 이미 있는지 조회
 		if (metadataRepository.existsById(path))
-			throw new RuntimeException("해당 옵션 값이 있습니다..");
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 Metadata가 이미 있습니다.");
 
 		// 옵션 생성
 		Metadata metadata = metadataRepository.save(
@@ -174,11 +171,10 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * 옵션 생성 default Value를 활용
 	 * @param path
 	 */
-	@Override
-	public MetadataGetResponse createMetadata(String path) throws AdminException {
+	public MetadataGetResponse createMetadata(String path) throws BaseException {
 		// url 옵션이 이미 있는지 조회
 		if (metadataRepository.existsById(path))
-			throw new RuntimeException("해당 옵션 값이 있습니다..");
+			throw new BaseException(BaseStatus.DATA_FOUND, path + "에 대한 옵션 값이 있습니다.");
 
 		// 옵션 생성
 		Metadata metadata = metadataRepository.save(
@@ -186,7 +182,9 @@ public class MetadataService implements IMetadataServiceV1 {
 		);
 
 		// 옵션 Redis 저장
-		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(metadata));
+		metadataRedisUtils.setRedisData(path,
+				jsonToStringConverter.objectToJson(metadata), metadata.getMetadataTtlSecond());
+
 		// response 반환
 		return MetadataGetResponse.from(metadata);
 	}
@@ -195,7 +193,6 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * 옵션들의 목록을 조회한다. (10개씩 페이징)
 	 * @param pageRequest 조회할 목록의 size, page 번호가 들어 있는 Paging 클래스
 	 */
-	@Override
 	public List<MetadataGetResponse> findAllByPage(PageRequest pageRequest) {
 		return metadataRepository.findAll(pageRequest).stream().map(MetadataGetResponse::from).toList();
 	}
@@ -212,7 +209,6 @@ public class MetadataService implements IMetadataServiceV1 {
 	 * 옵션이 있는 지 확인
 	 * @param path 유무를 확인할 path 값
 	 */
-	@Override
 	public Boolean isExistById(String path) {
 		if (metadataRedisUtils.isExist(path))
 			return true;

@@ -23,15 +23,10 @@ public class Metadata {
 	@Column(nullable = false)
 	private Long metadataTtlSecond;
 
-	@Column(nullable = false)
-	private int version;
-
-
 	public static Metadata defaultValue(String metadataUrl){
 		return Metadata.builder()
 			.metadataUrl(metadataUrl)
 			.metadataTtlSecond(60 * 10L)
-			.version(0)
 			.build();
 	}
 
@@ -39,15 +34,6 @@ public class Metadata {
 		return Metadata.builder()
 			.metadataUrl(metadataUrl)
 			.metadataTtlSecond(metadataTtlSecond)
-			.version(1)
-			.build();
-	}
-
-	public static Metadata updateValue(String metadataUrl, Long metadataTtlSecond, int version){
-		return Metadata.builder()
-			.metadataUrl(metadataUrl)
-			.metadataTtlSecond(metadataTtlSecond)
-			.version(version + 1)
 			.build();
 	}
 }
