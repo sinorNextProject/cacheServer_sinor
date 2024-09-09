@@ -8,8 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.global.ResponseStatus;
-import com.sinor.cache.global.SuccessResponse;
+import com.sinor.cache.global.exception.notuse.ResponseStatus;
+import com.sinor.cache.global.exception.notuse.SuccessResponse;
 import com.sinor.cache.utils.JsonToStringConverter;
 
 @RestController
@@ -34,7 +34,7 @@ public class MetadataController implements IMetadataControllerV1 {
 	public ResponseEntity<SuccessResponse<?>> getMetadata(String path) {
 		SuccessResponse<?> adminResponse = SuccessResponse.from(ResponseStatus.SUCCESS,
 			metadataService.findMetadataById(path));
-		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(adminResponse);
+		return ResponseEntity.status(adminResponse.getCode()).body(adminResponse);
 	}
 
 	/**

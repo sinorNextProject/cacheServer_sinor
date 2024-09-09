@@ -1,6 +1,6 @@
 package com.sinor.cache.service;
 
-import com.sinor.cache.global.admin.AdminException;
+import com.sinor.cache.global.exception.notuse.admin.AdminException;
 import com.sinor.cache.model.ApiGetResponse;
 
 public interface IApiServiceV1 {

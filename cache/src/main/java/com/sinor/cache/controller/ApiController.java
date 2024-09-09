@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.global.ResponseStatus;
-import com.sinor.cache.global.SuccessResponse;
+import com.sinor.cache.global.exception.notuse.ResponseStatus;
+import com.sinor.cache.global.exception.notuse.SuccessResponse;
 
 @RestController
 public class ApiController implements IApiControllerV1 {

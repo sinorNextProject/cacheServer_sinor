@@ -1,4 +1,4 @@
-package com.sinor.cache.global.admin;
+package com.sinor.cache.global.exception.notuse.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,5 +7,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AdminException extends RuntimeException {
 	private AdminResponseStatus status;
-
 }

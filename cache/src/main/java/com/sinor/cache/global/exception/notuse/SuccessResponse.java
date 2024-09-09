@@ -1,4 +1,4 @@
-package com.sinor.cache.global;
+package com.sinor.cache.global.exception.notuse;
 
 import java.time.LocalDateTime;
 
