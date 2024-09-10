@@ -6,6 +6,7 @@ import com.sinor.cache.model.ApiGetResponse;
 import com.sinor.cache.model.MainCacheResponse;
 import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,8 +35,10 @@ public class MainCacheService implements IMainCacheServiceV1 {
 	private final RedisUtils defaultRedisUtils;
 
 	@Autowired
-	public MainCacheService(WebClient webClient, MetadataService metadataService,
-		JsonToStringConverter jsonToStringConverter, RedisUtils defaultRedisUtils) {
+	public MainCacheService(@Qualifier("mainWebClient") WebClient webClient,
+							MetadataService metadataService,
+							JsonToStringConverter jsonToStringConverter,
+							RedisUtils defaultRedisUtils) {
 		this.webClient = webClient;
 		this.metadataService = metadataService;
 		this.jsonToStringConverter = jsonToStringConverter;
@@ -51,6 +54,7 @@ public class MainCacheService implements IMainCacheServiceV1 {
 	public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
 		MultiValueMap<String, String> headers) {
 
+		log.info("메인서버로 전송");
 		//테스트 Main uri
 		try {
 			ResponseEntity<String> response = webClient.get()
@@ -75,7 +79,33 @@ public class MainCacheService implements IMainCacheServiceV1 {
 			throw new MainException(MainResponseStatus.CONNECTION_FAILED);
 		}
 	}
+	/*public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
+												  MultiValueMap<String, String> headers) {
 
+		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
+		try {
+			ResponseEntity<String> response = webClient.get()
+					.uri(uriBuilder -> uriBuilder.path(path).queryParams(queryString).build())
+					.headers(header -> header.addAll(headers))
+					.retrieve()
+					.toEntity(String.class)
+					.block();
+
+			log.info("응답 받음 - Status: {}", response.getStatusCode());
+
+			HttpHeaders modifiedHeaders = new HttpHeaders();
+			modifiedHeaders.addAll(response.getHeaders());
+			modifiedHeaders.remove(HttpHeaders.TRANSFER_ENCODING);
+
+			return ResponseEntity
+					.status(response.getStatusCode())
+					.headers(modifiedHeaders)
+					.body(response.getBody());
+		} catch (WebClientResponseException e) {
+			log.error("메인 서버 연결 실패", e);
+			throw new MainException(MainResponseStatus.CONNECTION_FAILED);
+		}
+	}*/
 	/**
 	 * Main 서버에 요청을 보내는 메서드
 	 *
@@ -188,15 +218,17 @@ public class MainCacheService implements IMainCacheServiceV1 {
 	public MainCacheResponse getDataInCache(String path, MultiValueMap<String, String> queryParams,
 											MultiValueMap<String, String> headers) throws AdminException {
 
-		// metadata 확인
-		// Metadata 조회
+		// metadata 확인, 조회
 		MetadataGetResponse metadata = metadataService.findMetadataCacheById(path);
+		log.info("2. " + metadata.getMetadataUrl());
 
 		if (metadata == null)
 			return null;
 
 		// URI 조합
 		String key = URIUtils.getResponseKey(path, queryParams);
+
+		log.info("3. " + key);
 
 		// response 확인
 		if (!defaultRedisUtils.isExist(key))
@@ -217,9 +249,11 @@ public class MainCacheService implements IMainCacheServiceV1 {
 	 */
 	public MainCacheResponse postInCache(String path, MultiValueMap<String, String> queryParams,
 		MultiValueMap<String, String> headers) {
-
+		log.info("4. 관련 캐시가 없다면 " + path);
 		// Main에서 받은 값 CustomResponse로 Body, Header, Status 분할
 		ResponseEntity<String> data = getMainPathData(path, queryParams, headers);
+
+		log.info("5. " + data);
 
 		MainCacheResponse mainCacheResponse = MainCacheResponse.from(data);
 
@@ -230,7 +264,7 @@ public class MainCacheService implements IMainCacheServiceV1 {
 		ApiGetResponse apiGetResponse = ApiGetResponse.from(metadata, mainCacheResponse);
 		String response = jsonToStringConverter.objectToJson(apiGetResponse);
 
-		// path + queryString + metadata version 형태의 Key 이름 생성
+		// path + queryString 형태의 Key 이름 생성
 		String cacheKeyName = URIUtils.getResponseKey(path, queryParams);
 		// 캐시 저장
 		defaultRedisUtils.setRedisData(cacheKeyName, response, metadata.getMetadataTtlSecond());

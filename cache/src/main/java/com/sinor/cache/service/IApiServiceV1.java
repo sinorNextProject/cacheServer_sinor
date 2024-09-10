@@ -35,7 +35,7 @@ public interface IApiServiceV1 {
 
 	/**
 	 * 패턴과 일치하는 캐시 삭제
-	 * @param pattern 삭제할 캐시들의 공통 패턴
+	 * @param
 	 */
 	// void deleteCacheList(String pattern) throws AdminException;
 

@@ -45,14 +45,9 @@ public class ApiService implements IApiServiceV1 {
 	 */
 	public ApiGetResponse findCacheById(String key) throws AdminException {
 
-<<<<<<< HEAD
-		String value = responseRedisUtils.getRedisData(key);
-=======
-		String versionKey = URIUtils.getUriPathQuery(key,
-			metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key)).getVersion());
+		key = defaultRedisUtils.disuniteKey(key);
 
-		String value = defaultRedisUtils.getRedisData(versionKey);
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
+		String value = defaultRedisUtils.getRedisData(key);
 		if (value.isBlank())
 			throw new AdminException(CACHE_NOT_FOUND);
 
@@ -86,14 +81,10 @@ public class ApiService implements IApiServiceV1 {
 	@Override
 	@Transactional
 	public ApiGetResponse saveOrUpdate(String key, String value, Long expiredTime) throws AdminException {
-<<<<<<< HEAD
 
-=======
 		// path 추출, 해당 path의 metadata 조회
 		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));
 		// 조회한 값을 이용한 Versioning 된 Cache Name 추출
-		key = URIUtils.getUriPathQuery(key, metadata.getVersion());
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 
 		// 캐시에 저장된 값이 있으면 수정, 없으면 생성
 		defaultRedisUtils.setRedisData(key, value, expiredTime);
@@ -108,16 +99,10 @@ public class ApiService implements IApiServiceV1 {
 	@Override
 	public Boolean deleteCacheById(String key) throws AdminException {
 
-<<<<<<< HEAD
-		log.info("value of deleted key: " + responseRedisUtils.getRedisData(key));
-		return responseRedisUtils.deleteCache(key);
-=======
-		String versionKey = URIUtils.getUriPathQuery(key,
-			metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key)).getVersion());
+		key = defaultRedisUtils.disuniteKey(key);
 
-		log.info("value of deleted key: " + defaultRedisUtils.getRedisData(versionKey));
-		return defaultRedisUtils.deleteCache(versionKey);
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
+		log.info("value of deleted key: " + defaultRedisUtils.getRedisData(key));
+		return defaultRedisUtils.deleteCache(key);
 	}
 
 	/**
@@ -145,13 +130,7 @@ public class ApiService implements IApiServiceV1 {
 	@Override
 	public ApiGetResponse updateCacheById(String key, String response) {
 		// path 추출, 해당 path의 metadata 조회
-<<<<<<< HEAD
-		MetadataGetResponse metadata = metadataService.findMetadataById(responseRedisUtils.disuniteKey(key));
-=======
 		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));
-		// 조회한 값을 이용한 Versioning 된 Cache Name 추출
-		key = URIUtils.getUriPathQuery(key, metadata.getVersion());
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 
 		if (defaultRedisUtils.isExist(key)) {
 

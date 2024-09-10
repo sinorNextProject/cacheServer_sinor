@@ -34,7 +34,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 	@Override
 	public ResponseEntity<?> getDataReadCache(String path, MultiValueMap<String, String> queryParams,
 		MultiValueMap<String, String> headers) {
-
+		log.info("1. " + queryParams.toString());
 		MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
 
 		MainCacheResponse pathCache = mainCacheService.getDataInCache(path, encodedQueryParams, headers);
@@ -44,7 +44,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 			pathCache = mainCacheService.postInCache(path, encodedQueryParams, headers);
 
 		//TODO niginx.conf에 설정해두어서 원래 clientIp가 출력되야 하는데, null값 출력
-		log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
+		//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
 
 		// 헤더 재조립
 		HttpHeaders header = new HttpHeaders();

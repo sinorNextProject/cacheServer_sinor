@@ -112,9 +112,7 @@ public class CacheMessage implements MessageListener {
 		list.remove(key);
 		cacheListRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(list));
 	}
-<<<<<<< HEAD
 }
-=======
 
 	*/
 /**
@@ -127,4 +125,3 @@ public class CacheMessage implements MessageListener {
 		return uri;
 	}
 }*/
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a

@@ -21,7 +21,14 @@ public class URIUtils {
 
 		return builder;
 	}
-
+	/*public static UriComponentsBuilder uriComponentsBuilder(String path, MultiValueMap<String, String> queryParams) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path);
+		if (queryParams != null) {
+			builder.queryParams(queryParams);
+		}
+		return builder;
+	}
+*/
 	public static String getResponseKey(String path, MultiValueMap<String, String> queryParams) {
 		UriComponentsBuilder uriComponents = UriComponentsBuilder.fromPath(path);
 

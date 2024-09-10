@@ -1,29 +1,24 @@
 package com.sinor.cache.common;
 
-<<<<<<< HEAD
 import java.util.List;
 
 import com.sinor.cache.model.Metadata;
 import com.sinor.cache.service.MetadataService;
-=======
 import com.sinor.cache.model.Metadata;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 import com.sinor.cache.service.MetadataService;
 
-<<<<<<< HEAD
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
 
 import lombok.extern.slf4j.Slf4j;
-=======
+
 import java.util.List;
->>>>>>> f2029ac75f51871c975dd13e5b9b320ee23fa75a
 
 @Service
 @Slf4j
