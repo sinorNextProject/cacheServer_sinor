@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(BaseException.class)
 	public ResponseEntity<?> baseException(BaseException e) {
-		log.error("Base Exception Occurred : " + e.getCause());
+		log.error("Base Exception Occurred : " + e.getMessage());
 		BaseResponse responseBody = BaseResponse.from(e.getStatus());
 		return ResponseEntity.status((e).getStatus().getStatus()).body(responseBody);
 	}
