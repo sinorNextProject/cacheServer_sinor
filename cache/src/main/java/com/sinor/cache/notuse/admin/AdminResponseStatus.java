@@ -1,4 +1,4 @@
-package com.sinor.cache.common.admin;
+package com.sinor.cache.notuse.admin;
 
 import lombok.Getter;
 

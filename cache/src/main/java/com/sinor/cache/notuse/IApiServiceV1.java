@@ -1,9 +1,7 @@
-package com.sinor.cache.service;
+package com.sinor.cache.notuse;
 
-import com.sinor.cache.common.admin.AdminException;
+import com.sinor.cache.notuse.admin.AdminException;
 import com.sinor.cache.model.ApiGetResponse;
-
-import java.util.List;
 
 public interface IApiServiceV1 {
 

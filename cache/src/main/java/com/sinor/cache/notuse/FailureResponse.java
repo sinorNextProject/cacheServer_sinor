@@ -1,11 +1,11 @@
-package com.sinor.cache.common;
+package com.sinor.cache.notuse;
 
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.sinor.cache.common.admin.AdminResponseStatus;
-import com.sinor.cache.common.main.MainResponseStatus;
+import com.sinor.cache.notuse.admin.AdminResponseStatus;
+import com.sinor.cache.notuse.main.MainResponseStatus;
 
 import lombok.Getter;
 

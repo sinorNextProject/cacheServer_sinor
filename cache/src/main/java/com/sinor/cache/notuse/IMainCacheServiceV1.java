@@ -1,4 +1,4 @@
-package com.sinor.cache.service;
+package com.sinor.cache.notuse;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import com.sinor.cache.model.MainCacheResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
-import com.sinor.cache.common.main.MainException;
+import com.sinor.cache.notuse.main.MainException;
 
 public interface IMainCacheServiceV1 {
 	/**

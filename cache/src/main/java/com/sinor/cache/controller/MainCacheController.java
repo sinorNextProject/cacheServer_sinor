@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sinor.cache.utils.URIUtils;
 
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 //TODO logback-spring.xml파일에 UTF-8설정을 해주었지만 한글 출력X,도커와 관련된 문제가 아닐까 추측
 @Slf4j
 @RestController
-public class MainCacheController implements IMainCacheControllerV1 {
+public class MainCacheController {
 
 	private final MainCacheService mainCacheService;
 
@@ -31,7 +31,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 	 * @param queryParams 요청에 전달된 queryString
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
-	@Override
+	@GetMapping("/{path}")
 	public ResponseEntity<?> getDataReadCache(String path, MultiValueMap<String, String> queryParams,
 		MultiValueMap<String, String> headers) {
 		log.info("1. " + queryParams.toString());
@@ -63,7 +63,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 	 * @param body        요청에 전달된 RequestBody 내용에 매핑된 RequestBodyDto 객체
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
-	@Override
+	@PostMapping("/{path}")
 	public ResponseEntity<String> postDataReadCache(String path, MultiValueMap<String, String> queryParams,
 													MainCacheRequest body, MultiValueMap<String, String> headers) {
 
@@ -78,7 +78,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 	 * @param queryParams 요청에 전달된 queryString
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
-	@Override
+	@DeleteMapping("/{path}")
 	public ResponseEntity<String> deleteDataRefreshCache(String path, MultiValueMap<String, String> queryParams,
 		MultiValueMap<String, String> headers) {
 		return mainCacheService.deleteMainPathData(path, URIUtils.encodingUrl(queryParams), headers);
@@ -92,7 +92,7 @@ public class MainCacheController implements IMainCacheControllerV1 {
 	 * @param body        요청에 전달된 RequestBody 내용에 매핑된 RequestBodyDto 객체
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
-	@Override
+	@PutMapping("/{path}")
 	public ResponseEntity<String> updateDataRefreshCache(String path, MultiValueMap<String, String> queryParams,
 		MainCacheRequest body, MultiValueMap<String, String> headers) {
 		return mainCacheService.updateMainPathData(path, URIUtils.encodingUrl(queryParams),

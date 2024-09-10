@@ -112,16 +112,4 @@ public class CacheMessage implements MessageListener {
 		list.remove(key);
 		cacheListRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(list));
 	}
-}
-
-	*/
-/**
-	 * key에서 metadata version 부분 제거
-	 *//*
-
-	private String splitKeyVersion(String key){
-		int index = key.lastIndexOf("/V");
-		String uri = key.substring(0, index);
-		return uri;
-	}
 }*/

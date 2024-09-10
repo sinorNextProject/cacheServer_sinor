@@ -5,21 +5,24 @@ import java.nio.charset.StandardCharsets;
 
 import com.sinor.cache.model.ApIGetRequest;
 import com.sinor.cache.model.ApiGetResponse;
-import com.sinor.cache.service.IApiServiceV1;
+import com.sinor.cache.service.ApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sinor.cache.common.ResponseStatus;
-import com.sinor.cache.common.SuccessResponse;
+import com.sinor.cache.notuse.ResponseStatus;
+import com.sinor.cache.notuse.SuccessResponse;
 
 @RestController
-public class ApiController implements IApiControllerV1 {
+public class ApiController {
 	// 해당 컨트롤러의 API 구조는 캐시의 Key 값에 의해 수정될 필요가 있음
-	private final IApiServiceV1 apiService;
+	private final ApiService apiService;
 
 	@Autowired
-	public ApiController(IApiServiceV1 apiService) {
+	public ApiController(ApiService apiService) {
 		this.apiService = apiService;
 	}
 
@@ -29,7 +32,7 @@ public class ApiController implements IApiControllerV1 {
 	 * @param key 조회할 캐시의 Key 값
 	 */
 
-	@Override
+	@GetMapping("/admin/cache")
 	public ResponseEntity<SuccessResponse<?>> getCache(String key) {
 
 		//TODO 인코딩된 부분을 해결하기 위해 작성(개선 필요)
@@ -59,7 +62,7 @@ public class ApiController implements IApiControllerV1 {
 	 * 단일 캐시 삭제
 	 * @param key 삭제할 캐시의 key 값
 	 */
-	@Override
+	@DeleteMapping("/admin/cache")
 	public ResponseEntity<?> deleteCache(String key) {
 
 		//TODO 인코딩된 부분을 해결하기 위해 작성(개선 필요)
@@ -77,7 +80,7 @@ public class ApiController implements IApiControllerV1 {
 		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body("삭제 성공");
 	}*/
 
-	@Override
+	@PutMapping("/admin/cache")
 	public ResponseEntity<?> updateCache(ApIGetRequest request) {
 		ApiGetResponse adminResponse = apiService.updateCacheById(request.getKey(), request.getResponse());
 

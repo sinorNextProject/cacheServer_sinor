@@ -1,9 +1,9 @@
-package com.sinor.cache.service;
+package com.sinor.cache.notuse;
 
 import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.data.domain.PageRequest;
 
-import com.sinor.cache.common.admin.AdminException;
+import com.sinor.cache.notuse.admin.AdminException;
 
 import java.util.List;
 
