@@ -32,8 +32,9 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@GetMapping("/{path}")
-	public ResponseEntity<?> getDataReadCache(String path, MultiValueMap<String, String> queryParams,
-		MultiValueMap<String, String> headers) {
+	public ResponseEntity<?> getDataReadCache(@PathVariable String path,
+											  @RequestParam(required = false) MultiValueMap<String, String> queryParams,
+											  @RequestHeader MultiValueMap<String, String> headers) {
 		log.info("1. " + queryParams.toString());
 		MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
 
@@ -64,8 +65,9 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@PostMapping("/{path}")
-	public ResponseEntity<String> postDataReadCache(String path, MultiValueMap<String, String> queryParams,
-													MainCacheRequest body, MultiValueMap<String, String> headers) {
+	public ResponseEntity<String> postDataReadCache(@PathVariable String path,
+													@RequestParam(required = false) MultiValueMap<String, String> queryParams,
+													MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers) {
 
 		return mainCacheService.postMainPathData(path, URIUtils.encodingUrl(queryParams),
 			body.getRequestBody(), headers);
@@ -79,8 +81,9 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@DeleteMapping("/{path}")
-	public ResponseEntity<String> deleteDataRefreshCache(String path, MultiValueMap<String, String> queryParams,
-		MultiValueMap<String, String> headers) {
+	public ResponseEntity<String> deleteDataRefreshCache(@PathVariable String path,
+														 @RequestParam(required = false) MultiValueMap<String, String> queryParams,
+														 @RequestHeader MultiValueMap<String, String> headers) {
 		return mainCacheService.deleteMainPathData(path, URIUtils.encodingUrl(queryParams), headers);
 	}
 
@@ -93,8 +96,9 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@PutMapping("/{path}")
-	public ResponseEntity<String> updateDataRefreshCache(String path, MultiValueMap<String, String> queryParams,
-		MainCacheRequest body, MultiValueMap<String, String> headers) {
+	public ResponseEntity<String> updateDataRefreshCache(@PathVariable String path,
+														 @RequestParam(required = false) MultiValueMap<String, String> queryParams,
+														 MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers) {
 		return mainCacheService.updateMainPathData(path, URIUtils.encodingUrl(queryParams),
 			body.getRequestBody(), headers);
 	}

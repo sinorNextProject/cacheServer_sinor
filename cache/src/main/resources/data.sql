@@ -4,3 +4,5 @@ INSERT INTO metadata(metadata_url, metadata_ttl_second)
 values ('appUsers', 40);
 INSERT INTO metadata(metadata_url, metadata_ttl_second)
 values ('gathering', 100);
+INSERT INTO metadata(metadata_url, metadata_ttl_second)
+values ('expression', 100);
