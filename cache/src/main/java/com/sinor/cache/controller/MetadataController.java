@@ -4,17 +4,11 @@ import com.sinor.cache.global.exception.BaseResponse;
 import com.sinor.cache.global.exception.BaseStatus;
 import com.sinor.cache.global.exception.DataResponse;
 import com.sinor.cache.model.MetadataGetResponse;
-import com.sinor.cache.service.IApiServiceV1;
-import com.sinor.cache.service.IMetadataServiceV1;
 import com.sinor.cache.service.MetadataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.sinor.cache.global.exception.notuse.ResponseStatus;
-import com.sinor.cache.global.exception.notuse.SuccessResponse;
-import com.sinor.cache.utils.JsonToStringConverter;
 
 @RestController
 public class MetadataController {

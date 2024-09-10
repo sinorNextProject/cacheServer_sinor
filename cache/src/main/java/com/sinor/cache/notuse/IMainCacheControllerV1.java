@@ -1,4 +1,4 @@
-package com.sinor.cache.controller;
+package com.sinor.cache.notuse;
 
 import com.sinor.cache.model.MainCacheRequest;
 import org.springframework.http.ResponseEntity;

@@ -2,7 +2,7 @@ package com.sinor.cache.service;
 
 import com.sinor.cache.global.exception.BaseException;
 import com.sinor.cache.global.exception.BaseStatus;
-import com.sinor.cache.global.exception.notuse.admin.AdminException;
+import com.sinor.cache.notuse.admin.AdminException;
 import com.sinor.cache.model.Metadata;
 import com.sinor.cache.model.MetadataGetResponse;
 import com.sinor.cache.repository.MetadataRepository;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sinor.cache.global.exception.notuse.admin.AdminResponseStatus.METADATA_NOT_FOUND;
+import static com.sinor.cache.notuse.admin.AdminResponseStatus.METADATA_NOT_FOUND;
 
 @Slf4j
 @Service

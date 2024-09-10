@@ -1,6 +1,6 @@
 package com.sinor.cache.utils;
 
-import static com.sinor.cache.global.exception.notuse.admin.AdminResponseStatus.*;
+import static com.sinor.cache.notuse.admin.AdminResponseStatus.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.KeyScanOptions;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
-import com.sinor.cache.global.exception.notuse.admin.AdminException;
+import com.sinor.cache.notuse.admin.AdminException;
 
 /**
  * RedisTemplate을 사용할 때 관련 Exception 처리를 해놓은 클래스

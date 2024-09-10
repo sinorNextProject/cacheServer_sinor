@@ -1,6 +1,6 @@
 package com.sinor.cache.service;
 
-import static com.sinor.cache.global.exception.notuse.admin.AdminResponseStatus.*;
+import static com.sinor.cache.notuse.admin.AdminResponseStatus.*;
 import static java.nio.charset.StandardCharsets.*;
 
 import java.util.List;
@@ -12,17 +12,16 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sinor.cache.global.exception.notuse.admin.AdminException;
+import com.sinor.cache.notuse.admin.AdminException;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
-import com.sinor.cache.utils.URIUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-public class ApiService implements IApiServiceV1 {
+public class ApiService {
 
 	private final JsonToStringConverter jsonToStringConverter;
 //	private final RedisUtils cacheListRedisUtils;
@@ -76,7 +75,6 @@ public class ApiService implements IApiServiceV1 {
 	 * @param value 생성할 캐시의 Value
 	 * @param expiredTime 생성할 캐시의 만료시간
 	 */
-	@Override
 	@Transactional
 	public ApiGetResponse saveOrUpdate(String key, String value, Long expiredTime) throws AdminException {
 
@@ -90,7 +88,6 @@ public class ApiService implements IApiServiceV1 {
 	 * 캐시 삭제
 	 * @param key 삭제할 캐시의 Key
 	 */
-	@Override
 	public Boolean deleteCacheById(String key) throws AdminException {
 		log.info("value of deleted key: " + defaultRedisUtils.getRedisData(key));
 		return defaultRedisUtils.deleteCache(key);
@@ -118,7 +115,6 @@ public class ApiService implements IApiServiceV1 {
 	 * @return 수정된 결과값
 	 */
 	//TODO Redis에서 업데이트 확인, 출력을 위한 역직렬화 과정에서 오류 발생(response의 형식이 너무 까다로움)
-	@Override
 	public ApiGetResponse updateCacheById(String key, String response) {
 		// path 추출, 해당 path의 metadata 조회
 		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));

@@ -1,12 +1,9 @@
 package com.sinor.cache.utils;
 
-import static com.sinor.cache.global.exception.notuse.admin.AdminResponseStatus.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinor.cache.global.exception.BaseException;
 import com.sinor.cache.global.exception.BaseStatus;
-import com.sinor.cache.global.exception.notuse.admin.AdminException;
 
 import lombok.extern.slf4j.Slf4j;
 
