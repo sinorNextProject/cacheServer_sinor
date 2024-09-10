@@ -11,7 +11,12 @@ public class DataResponse<T> extends BaseResponse{
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T data;
 
-    // 요청에 성공한 경우
+    /**
+     * Response 생성자
+     * BaseState와 전달/저장할 data를 저장한다.
+     * @param status 성공 여부, 상태 코드, 메시지를 담고 있는 클래스 객체
+     * @param data 전달 및 저장할 데이터 객체
+     */
     private DataResponse(BaseStatus status, T data) {
         super(status);
         this.data = data;
