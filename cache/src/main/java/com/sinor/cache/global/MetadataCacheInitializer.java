@@ -1,4 +1,4 @@
-package com.sinor.cache.common;
+package com.sinor.cache.global;
 
 import com.sinor.cache.model.Metadata;
 import com.sinor.cache.service.MetadataService;

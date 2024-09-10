@@ -22,6 +22,7 @@ public class Metadata {
 
 	@Column(nullable = false)
 	private Long metadataTtlSecond;
+
 	public static Metadata defaultValue(String metadataUrl){
 		return Metadata.builder()
 			.metadataUrl(metadataUrl)
@@ -30,13 +31,6 @@ public class Metadata {
 	}
 
 	public static Metadata createValue(String metadataUrl, Long metadataTtlSecond){
-		return Metadata.builder()
-			.metadataUrl(metadataUrl)
-			.metadataTtlSecond(metadataTtlSecond)
-			.build();
-	}
-
-	public static Metadata updateValue(String metadataUrl, Long metadataTtlSecond){
 		return Metadata.builder()
 			.metadataUrl(metadataUrl)
 			.metadataTtlSecond(metadataTtlSecond)

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sinor.cache.common.SuccessResponse;
+import com.sinor.cache.global.exception.notuse.SuccessResponse;
 
 public interface IMetadataControllerV1 {
 	/**

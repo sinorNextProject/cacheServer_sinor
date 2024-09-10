@@ -14,9 +14,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import com.sinor.cache.common.admin.AdminException;
-import com.sinor.cache.common.main.MainException;
-import com.sinor.cache.common.main.MainResponseStatus;
+import com.sinor.cache.global.exception.notuse.admin.AdminException;
+import com.sinor.cache.global.exception.notuse.main.MainException;
+import com.sinor.cache.global.exception.notuse.main.MainResponseStatus;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
 import com.sinor.cache.utils.URIUtils;

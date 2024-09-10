@@ -1,9 +1,8 @@
 package com.sinor.cache.service;
 
-import static com.sinor.cache.common.admin.AdminResponseStatus.*;
+import static com.sinor.cache.global.exception.notuse.admin.AdminResponseStatus.*;
 import static java.nio.charset.StandardCharsets.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.sinor.cache.model.ApiGetResponse;
@@ -13,7 +12,7 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sinor.cache.common.admin.AdminException;
+import com.sinor.cache.global.exception.notuse.admin.AdminException;
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
 import com.sinor.cache.utils.URIUtils;
