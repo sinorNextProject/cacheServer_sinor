@@ -26,9 +26,7 @@ import static com.sinor.cache.notuse.admin.AdminResponseStatus.METADATA_NOT_FOUN
 public class MetadataService {
 	private final MetadataRepository metadataRepository;
 	private final JsonToStringConverter jsonToStringConverter;
-
 	private final RedisUtils metadataRedisUtils;
-	//private final RedisUtils cacheListRedisUtils;
 
 	@Autowired
 	public MetadataService(MetadataRepository optionRepository, JsonToStringConverter jsonToStringConverter,
@@ -36,7 +34,6 @@ public class MetadataService {
 		this.metadataRepository = optionRepository;
 		this.jsonToStringConverter = jsonToStringConverter;
 		this.metadataRedisUtils = metadataRedisUtils;
-		//this.cacheListRedisUtils = cacheListRedisUtils;
 	}
 
 	/**
@@ -169,12 +166,12 @@ public class MetadataService {
 
 	/**
 	 * 옵션 생성 default Value를 활용
-	 * @param path
+	 * @param path 생성하려는 metadata의 URL Path
 	 */
 	public MetadataGetResponse createMetadata(String path) throws BaseException {
 		// url 옵션이 이미 있는지 조회
 		if (metadataRepository.existsById(path))
-			throw new BaseException(BaseStatus.DATA_FOUND, path + "에 대한 옵션 값이 있습니다.");
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 옵션 값이 있습니다.");
 
 		// 옵션 생성
 		Metadata metadata = metadataRepository.save(
