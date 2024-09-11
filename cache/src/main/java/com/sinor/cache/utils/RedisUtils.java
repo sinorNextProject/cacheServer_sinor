@@ -5,6 +5,7 @@ import static com.sinor.cache.notuse.admin.AdminResponseStatus.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.sinor.cache.global.exception.BaseException;
@@ -38,6 +39,14 @@ public class RedisUtils {
 		} catch (NullPointerException e) {
 			throw new AdminException(CACHE_NOT_FOUND);
 		}
+	}
+
+	/**
+	 * 모든 Keys값 리턴.
+	 * 어지간하면 미사용 권장.
+	 */
+	public Set<String> getKeys(){
+        return redisTemplate.keys("*");
 	}
 
 	/**
@@ -79,7 +88,6 @@ public class RedisUtils {
 	 * @return 찾은 key들의 Cursor
 	 */
 	public Cursor<byte[]> searchPatternKeys(String pattern) {
-
 		return redisTemplate.executeWithStickyConnection(connection -> {
 			ScanOptions options = KeyScanOptions.scanOptions().match("*" + pattern + "*").build();
 			return connection.keyCommands().scan(options);
