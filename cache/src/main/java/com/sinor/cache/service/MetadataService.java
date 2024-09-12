@@ -66,6 +66,21 @@ public class MetadataService {
 	}
 
 	/**
+	 * mysql 옵션 조회
+	 * @param path 조회할 Metadata의 path
+	 * @return metadata value OR null
+	 */
+	public MetadataGetResponse findMysqlMetadataById(String path) throws BaseException {
+		// 캐시 검사
+		Optional<Metadata> metadata = metadataRepository.findById(path);
+
+		if(metadata.isEmpty())
+			throw new BaseException(BaseStatus.NOT_FOUND, path + "에 대한 Metadata를 찾을 수 없습니다.");
+
+		return MetadataGetResponse.from(metadata.get());
+	}
+
+	/**
 	 * 옵션 수정
 	 * @param path 옵션 변경할 path 값
 	 * @param newExpiredTime 새로 적용할 만료시간
@@ -91,6 +106,30 @@ public class MetadataService {
 	}
 
 	/**
+	 * mysql 옵션 수정
+	 * @param path 옵션 변경할 path 값
+	 * @param newExpiredTime 새로 적용할 만료시간
+	 */
+	public MetadataGetResponse updateMysqlMetadata(String path, Long newExpiredTime) throws BaseException {
+
+		// 해당 url 유무 파악
+		if(!metadataRepository.existsById(path))
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 metadata가 없습니다.");
+
+		// Redis에서 Metadata 조회
+		Optional<Metadata> metadata = metadataRepository.findById(path);
+
+		// 역직렬화 및 수정된 객체 생성
+		Metadata saveMetadata = Metadata.createValue(metadata.get().getMetadataUrl(), newExpiredTime);
+
+		// 수정된 객체 저장
+		metadataRepository.save(saveMetadata);
+
+		// response 반환
+		return MetadataGetResponse.from(saveMetadata);
+	}
+
+	/**
 	 * 사용 자제 요망.
 	 * ShutdownEvent용 수정 메소드.
 	 * Mysql의 데이터를 직접 수정한다.
@@ -100,8 +139,6 @@ public class MetadataService {
 		log.info(metadata.getMetadataUrl() + "수정");
 	}
 
-	// TODO 수정 필요 메소드 Redis와 Mysql 개별로 삭제할 수 있도록 분리 필요
-	// TODO Redis만 삭제하도록 변경 완, Mysql 삭제도 필요시 작성 요망
 	/**
 	 * Redis의 옵션 삭제
 	 * @param path 삭제할 path
@@ -113,6 +150,19 @@ public class MetadataService {
 
 		// 캐시 삭제
 		metadataRedisUtils.deleteCache(path);
+	}
+
+	/**
+	 * Mysql의 옵션 삭제
+	 * @param path 삭제할 path
+	 */
+	public void deleteMysqlMetadataById(String path) throws BaseException {
+		// 유무 파악
+		if (!metadataRepository.existsById(path))
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 Metadata가 없어 삭제할 수 없습니다.");
+
+		// 캐시 삭제
+		metadataRepository.deleteById(path);
 	}
 
 	/**
@@ -129,7 +179,7 @@ public class MetadataService {
 		Metadata metadata = Metadata.createValue(path, expiredTime);
 
 		// 옵션 Redis 저장
-		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(metadata), metadata.getMetadataTtlSecond());
+		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(metadata));
 
 		// response 반환
 		return MetadataGetResponse.from(metadata);
@@ -148,15 +198,32 @@ public class MetadataService {
 		Metadata metadata = Metadata.defaultValue(path);
 
 		// 옵션 Redis 저장
-		metadataRedisUtils.setRedisData(path,
-				jsonToStringConverter.objectToJson(metadata), metadata.getMetadataTtlSecond());
+		metadataRedisUtils.setRedisData(path, jsonToStringConverter.objectToJson(metadata));
 
 		// response 반환
 		return MetadataGetResponse.from(metadata);
 	}
 
-	// TODO 불필요 메소드 제거 예정
-	// TODO 혹은 Redis에서 순서있는 목록 조회를 구현
+	/**
+	 * 옵션 생성 default Value를 활용
+	 * @param path 생성하려는 metadata의 URL Path
+	 */
+	public MetadataGetResponse createMysqlMetadata(String path) throws BaseException {
+		// url 옵션이 이미 있는지 조회
+		if (metadataRepository.existsById(path)) {
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 Metadata가 이미 있습니다.");
+		}
+
+		// 옵션 생성
+		Metadata metadata = Metadata.defaultValue(path);
+
+		// 옵션 Redis 저장
+		metadataRepository.save(metadata);
+
+		// response 반환
+		return MetadataGetResponse.from(metadata);
+	}
+
 	/**
 	 * 옵션들의 목록을 조회한다. (10개씩 페이징)
 	 * @param pageRequest 조회할 목록의 size, page 번호가 들어 있는 Paging 클래스
