@@ -82,13 +82,59 @@ public class MetadataController {
 	 * Mysql에 있는 Metadata 목록 조회, 10개 씩 Paging
 	 * @param page 목록의 Page 번호
 	 */
-	// TODO 우선 Mysql에 접근하는 애만 만들어놓기
 	@GetMapping("/admin/metadata/all")
-	public ResponseEntity<DataResponse<?>> getMetadataAll(@RequestParam int page) {
+	public ResponseEntity<DataResponse<?>> getMetadataAllFromMysql(@RequestParam int page) {
 		// 조회할 Metadata Page 설정 1 Page 당 데이터 10개
 		PageRequest pageRequest = PageRequest.of(page, 10);
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
 				metadataService.findAllByPage(pageRequest));
+		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
+	}
+
+	/**
+	 * mysql의 데이터 조회
+	 * @param path 조회할 옵션의 path
+	 */
+	@GetMapping("/admin/metadata/mysql")
+	public ResponseEntity<DataResponse<?>> getMetadataFromMysql(@RequestParam String path) {
+		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
+				metadataService.findMysqlMetadataById(path));
+		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
+	}
+
+	/**
+	 * mysql의 데이터 생성
+	 * @param path 생성할 옵션의 path
+	 */
+	@PostMapping("/admin/metadata")
+	public ResponseEntity<DataResponse<?>> createMetadataFromMysql(@RequestParam String path) {
+		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
+				metadataService.createMysqlMetadata(path));
+		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
+	}
+
+	/**
+	 * mysql의 데이터 수정
+	 * @param path 수정할 옵션의 path
+	 */
+	@PutMapping("/admin/metadata")
+	public ResponseEntity<DataResponse<?>> updateMetadataFromMysql(@RequestParam String path, @RequestParam Long newExpiredTime) {
+		// 캐시 수정
+		MetadataGetResponse updatedMetadata = metadataService.updateMysqlMetadata(path, newExpiredTime);
+		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK, updatedMetadata);
+
+		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
+	}
+
+	/**
+	 * mysql의 데이터 삭제
+	 * @param path 삭제할 옵션의 path
+	 */
+	@DeleteMapping("/admin/metadata")
+	public ResponseEntity<BaseResponse> deleteMetadataFromMysql(@RequestParam String path) {
+		metadataService.deleteMysqlMetadataById(path);
+
+		BaseResponse metadataResponse = BaseResponse.from(BaseStatus.OK);
 		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
 	}
 }
