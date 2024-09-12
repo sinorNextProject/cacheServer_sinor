@@ -25,7 +25,7 @@ public class MetadataController {
 	 * @param path 조회할 옵션의 path
 	 */
 	@GetMapping("/admin/metadata")
-	public ResponseEntity<DataResponse<?>> getMetadata(String path) {
+	public ResponseEntity<DataResponse<?>> getMetadata(@RequestParam String path) {
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
 			metadataService.findMetadataById(path));
 		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
@@ -35,7 +35,7 @@ public class MetadataController {
 	 * @param path 생성할 옵션의 path
 	 */
 	@PostMapping("/admin/metadata")
-	public ResponseEntity<DataResponse<?>> createMetadata(String path) {
+	public ResponseEntity<DataResponse<?>> createMetadata(@RequestParam String path) {
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
 			metadataService.createMetadata(path, 60 * 10L));
 		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
@@ -45,7 +45,7 @@ public class MetadataController {
 	 * @param path 수정할 옵션의 path
 	 */
 	@PutMapping("/admin/metadata")
-	public ResponseEntity<DataResponse<?>> updateMetadata(String path, Long newExpiredTime) {
+	public ResponseEntity<DataResponse<?>> updateMetadata(@RequestParam String path, @RequestParam Long newExpiredTime) {
 		// 캐시 수정
 		MetadataGetResponse updatedMetadata = metadataService.updateMetadata(path, newExpiredTime);
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK, updatedMetadata);
@@ -57,7 +57,7 @@ public class MetadataController {
 	 * @param path 삭제할 옵션의 path
 	 */
 	@DeleteMapping("/admin/metadata")
-	public ResponseEntity<BaseResponse> deleteMetadata(String path) {
+	public ResponseEntity<BaseResponse> deleteMetadata(@RequestParam String path) {
 		metadataService.deleteMetadataById(path);
 
 		if(metadataService.isExistById(path))
@@ -72,7 +72,7 @@ public class MetadataController {
 	 * @param path 유무를 파악할 path 값
 	 */
 	@GetMapping("/admin/metadata/exist")
-	public ResponseEntity<DataResponse<?>> isExistMetadata(String path) {
+	public ResponseEntity<DataResponse<?>> isExistMetadata(@RequestParam String path) {
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
 			metadataService.isExistById(path));
 		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
@@ -84,7 +84,7 @@ public class MetadataController {
 	 */
 	// TODO 우선 Mysql에 접근하는 애만 만들어놓기
 	@GetMapping("/admin/metadata/all")
-	public ResponseEntity<DataResponse<?>> getMetadataAll(int page) {
+	public ResponseEntity<DataResponse<?>> getMetadataAll(@RequestParam int page) {
 		// 조회할 Metadata Page 설정 1 Page 당 데이터 10개
 		PageRequest pageRequest = PageRequest.of(page, 10);
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
