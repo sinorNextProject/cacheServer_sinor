@@ -1,28 +1,33 @@
 package com.sinor.cache.service;
 
+import java.net.URI;
 import java.util.Map;
 
+import com.sinor.cache.global.exception.BaseException;
+import com.sinor.cache.global.exception.BaseStatus;
 import com.sinor.cache.model.ApiGetResponse;
 import com.sinor.cache.model.MainCacheResponse;
 import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.sinor.cache.notuse.admin.AdminException;
-import com.sinor.cache.notuse.main.MainException;
-import com.sinor.cache.notuse.main.MainResponseStatus;
+
 import com.sinor.cache.utils.JsonToStringConverter;
 import com.sinor.cache.utils.RedisUtils;
 import com.sinor.cache.utils.URIUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
@@ -35,6 +40,9 @@ public class MainCacheService {
 	private final RedisUtils defaultRedisUtils;
 
 	@Autowired
+	private RestTemplate restTemplate;
+
+	@Autowired
 	public MainCacheService(@Qualifier("mainWebClient") WebClient webClient,
 							MetadataService metadataService,
 							JsonToStringConverter jsonToStringConverter,
@@ -45,13 +53,44 @@ public class MainCacheService {
 		this.defaultRedisUtils = defaultRedisUtils;
 	}
 
+	public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
+												  MultiValueMap<String, String> headers) {
+		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
+
+		try {
+			// URI 구성
+			UriComponentsBuilder builder = URIUtils.uriComponentsBuilder(path, queryString);
+			URI uri = builder.build().toUri();
+
+			// HttpEntity 구성 (헤더 포함)
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.addAll(headers);
+			HttpEntity<String> requestEntity = new HttpEntity<>(null, requestHeaders);
+
+			// RestTemplate을 사용하여 요청 전송
+			ResponseEntity<String> response = restTemplate.exchange(
+					uri,
+					HttpMethod.GET,
+					requestEntity,
+					String.class
+			);
+
+			// 응답을 그대로 반환
+			return response;
+
+		} catch (BaseException e) {
+			log.error("메인서버 요청 중 오류 발생", e);
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
+		}
+	}
+
 	/**
 	 * Main 서버에 요청을 보내는 메서드
 	 *
 	 * @param path        요청 path
 	 * @param queryString 요청 queryString
 	 */
-	public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
+	/*public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
 		MultiValueMap<String, String> headers) {
 
 		log.info("메인서버로 전송");
@@ -75,10 +114,10 @@ public class MainCacheService {
 				.body(response.getBody());
 
 			return modifiedResponse;
-		} catch (WebClientResponseException e) {
-			throw new MainException(MainResponseStatus.CONNECTION_FAILED);
+		} catch (BaseException e) {
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
-	}
+	}*/
 	/*public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
 												  MultiValueMap<String, String> headers) {
 
@@ -136,8 +175,8 @@ public class MainCacheService {
 				.body(response.getBody());
 
 			return modifiedResponse;
-		} catch (WebClientResponseException e) {
-			throw new MainException(MainResponseStatus.CONNECTION_FAILED);
+		} catch (BaseException e) {
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
 	}
 
@@ -169,8 +208,8 @@ public class MainCacheService {
 				.body(response.getBody());
 
 			return modifiedResponse;
-		} catch (WebClientResponseException e) {
-			throw new MainException(MainResponseStatus.CONNECTION_FAILED);
+		} catch (BaseException e) {
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
 	}
 
@@ -203,8 +242,8 @@ public class MainCacheService {
 				.body(response.getBody());
 
 			return modifiedResponse;
-		} catch (WebClientResponseException e) {
-			throw new MainException(MainResponseStatus.CONNECTION_FAILED);
+		} catch (BaseException e) {
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
 	}
 
@@ -255,9 +294,10 @@ public class MainCacheService {
 
 		log.info("5. " + data);
 
+		//body, headers, statusCodeValue에 맞게 변환
 		MainCacheResponse mainCacheResponse = MainCacheResponse.from(data);
 
-		// 옵션 값 찾기 or 생성
+		// 옵션 값 찾기 or 없다면 생성
 		MetadataGetResponse metadata = metadataService.findMetadataById(path);
 
 		// 캐시 Response 객체를 위에 값을 이용해 생성하고 직렬화
