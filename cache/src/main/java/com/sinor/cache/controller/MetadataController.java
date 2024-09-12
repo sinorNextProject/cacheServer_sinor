@@ -27,7 +27,7 @@ public class MetadataController {
 	@GetMapping("/admin/metadata")
 	public ResponseEntity<DataResponse<?>> getMetadata(String path) {
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
-			metadataService.findMetadataCacheById(path));
+			metadataService.findMetadataById(path));
 		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
 	}
 
@@ -67,10 +67,8 @@ public class MetadataController {
 		return ResponseEntity.status(metadataResponse.getStatus()).body(metadataResponse);
 	}
 
-	// TODO 굳이 필요한지? 삭제 해야할 듯?
 	/**
 	 * 해당 path의 옵션이 있는지 확인
-	 *
 	 * @param path 유무를 파악할 path 값
 	 */
 	@GetMapping("/admin/metadata/exist")
@@ -81,11 +79,10 @@ public class MetadataController {
 	}
 
 	/**
-	 * Metadata 목록 조회, 10개 씩 Paging
-	 *
+	 * Mysql에 있는 Metadata 목록 조회, 10개 씩 Paging
 	 * @param page 목록의 Page 번호
 	 */
-	// TODO findAllByPage 메소드가 삭제가 아닌 수정이 되지 않으면 같이 삭제 예정
+	// TODO 우선 Mysql에 접근하는 애만 만들어놓기
 	@GetMapping("/admin/metadata/all")
 	public ResponseEntity<DataResponse<?>> getMetadataAll(int page) {
 		// 조회할 Metadata Page 설정 1 Page 당 데이터 10개

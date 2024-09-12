@@ -219,7 +219,7 @@ public class MainCacheService {
 											MultiValueMap<String, String> headers) throws AdminException {
 
 		// metadata 확인, 조회
-		MetadataGetResponse metadata = metadataService.findMetadataCacheById(path);
+		MetadataGetResponse metadata = metadataService.findMetadataById(path);
 		log.info("2. " + metadata.getMetadataUrl());
 
 		if (metadata == null)
@@ -258,7 +258,7 @@ public class MainCacheService {
 		MainCacheResponse mainCacheResponse = MainCacheResponse.from(data);
 
 		// 옵션 값 찾기 or 생성
-		MetadataGetResponse metadata = metadataService.findOrCreateMetadataById(path);
+		MetadataGetResponse metadata = metadataService.findMetadataById(path);
 
 		// 캐시 Response 객체를 위에 값을 이용해 생성하고 직렬화
 		ApiGetResponse apiGetResponse = ApiGetResponse.from(metadata, mainCacheResponse);

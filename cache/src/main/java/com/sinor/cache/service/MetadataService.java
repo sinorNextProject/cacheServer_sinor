@@ -53,7 +53,7 @@ public class MetadataService {
 	 * @param path 조회할 캐시의 path
 	 * @return metadata cache value OR null
 	 */
-	public MetadataGetResponse findMetadataCacheById(String path) throws BaseException {
+	public MetadataGetResponse findMetadataById(String path) throws BaseException {
 		// 캐시 검사
 		if(!metadataRedisUtils.isExist(path))
 			throw new BaseException(BaseStatus.NOT_FOUND, path + "에 대한 Metadata를 찾을 수 없습니다.");
@@ -179,49 +179,5 @@ public class MetadataService {
 	 */
 	public List<Metadata> findAll() {
 		return metadataRepository.findAll();
-	}
-
-	// TODO 불필요 메소드 제거 예정
-	/**
-	 * 옵션 조회 없으면 기본 10분 생성 후 반환
-	 * @param path 조회할 옵션의 path
-	 */
-	public MetadataGetResponse findOrCreateMetadataById(String path) throws BaseException {
-		// 캐시 검사
-		MetadataGetResponse metadataGetResponse = findMetadataCacheById(path);
-
-		if (metadataGetResponse != null)
-			return metadataGetResponse;
-
-		// 옵션 조회, 없으면 기본 10분으로 Metadata 생성
-		Optional<Metadata> metadata = metadataRepository.findById(path);
-
-		if (metadata.isEmpty())
-			return createMetadata(path);
-
-		// response 반환
-		return MetadataGetResponse.from(metadata.get());
-	}
-
-	// TODO 불필요 메소드 제거 예정
-	/**
-	 * 옵션 조회 없으면 예외 발생
-	 * @param path 조회할 옵션의 path
-	 */
-	public MetadataGetResponse findMetadataById(String path) throws BaseException {
-		// 캐시 검사
-		MetadataGetResponse metadataGetResponse = findMetadataCacheById(path);
-
-		if (metadataGetResponse != null)
-			return metadataGetResponse;
-
-		// 옵션 조회
-		Optional<Metadata> metadata = metadataRepository.findById(path);
-
-		if (metadata.isEmpty())
-			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "해당 Metadata가 존재하지 않습니다.");
-
-		// response 반환
-		return MetadataGetResponse.from(metadata.get());
 	}
 }
