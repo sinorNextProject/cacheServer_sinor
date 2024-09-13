@@ -32,7 +32,12 @@ public class MetadataCacheInitializer implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		log.info("데이터 Warmup 시작");
+
 		// 애플리케이션 실행 후 Mysql의 Metadata redis 캐시 저장
+		DataWarmUp();
+	}
+
+	private void DataWarmUp(){
 		List<Metadata> list = metadataService.findAll();
 
 		for (Metadata metadata : list) {

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -31,6 +32,11 @@ public class ShutdownEventListener implements ApplicationListener<ContextClosedE
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
         log.info("Application Down, Metadata Update Start!");
+        mySqlDataUpdate();
+    }
+
+    @Scheduled(cron = "0 0 3 * * *") // 매일 오전 3시
+    private void mySqlDataUpdate(){
         // Redis Metadata 목록 조회
         Set<String> list = metadataRedisUtils.getKeys();
         // 각 메타데이터 Mysql 갱신
