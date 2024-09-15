@@ -261,9 +261,6 @@ public class MainCacheService {
 		MetadataGetResponse metadata = metadataService.findMetadataById(path);
 		log.info("2. " + metadata.getMetadataUrl());
 
-		if (metadata == null)
-			return null;
-
 		// URI 조합
 		String key = URIUtils.getResponseKey(path, queryParams);
 
