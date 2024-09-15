@@ -106,7 +106,7 @@ public class MetadataController {
 	 * mysql의 데이터 생성
 	 * @param path 생성할 옵션의 path
 	 */
-	@PostMapping("/admin/metadata")
+	@PostMapping("/admin/metadata/mysql")
 	public ResponseEntity<DataResponse<?>> createMetadataFromMysql(@RequestParam String path) {
 		DataResponse<?> metadataResponse = DataResponse.from(BaseStatus.OK,
 				metadataService.createMysqlMetadata(path));
@@ -117,7 +117,7 @@ public class MetadataController {
 	 * mysql의 데이터 수정
 	 * @param path 수정할 옵션의 path
 	 */
-	@PutMapping("/admin/metadata")
+	@PutMapping("/admin/metadata/mysql")
 	public ResponseEntity<DataResponse<?>> updateMetadataFromMysql(@RequestParam String path, @RequestParam Long newExpiredTime) {
 		// 캐시 수정
 		MetadataGetResponse updatedMetadata = metadataService.updateMysqlMetadata(path, newExpiredTime);
@@ -130,7 +130,7 @@ public class MetadataController {
 	 * mysql의 데이터 삭제
 	 * @param path 삭제할 옵션의 path
 	 */
-	@DeleteMapping("/admin/metadata")
+	@DeleteMapping("/admin/metadata/mysql")
 	public ResponseEntity<BaseResponse> deleteMetadataFromMysql(@RequestParam String path) {
 		metadataService.deleteMysqlMetadataById(path);
 
