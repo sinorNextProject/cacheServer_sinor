@@ -56,3 +56,7 @@ springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
   paths-to-match:
+
+main:
+  server:
+    url: http://mainHost:8080

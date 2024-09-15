@@ -1,6 +1,5 @@
 package com.sinor.cache.service;
 
-import java.net.URI;
 import java.util.Map;
 
 import com.sinor.cache.global.exception.BaseException;
@@ -9,7 +8,7 @@ import com.sinor.cache.model.ApiGetResponse;
 import com.sinor.cache.model.MainCacheResponse;
 import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,21 +33,24 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Transactional
 public class MainCacheService {
 
+	@Value("${main.server.url}")
+	private String mainServerUrl;
+
 	private final WebClient webClient;
 	private final MetadataService metadataService;
+	private final RestTemplate restTemplate;
 	private final JsonToStringConverter jsonToStringConverter;
 	private final RedisUtils defaultRedisUtils;
 
 	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	public MainCacheService(@Qualifier("mainWebClient") WebClient webClient,
+	public MainCacheService(WebClient webClient,
 							MetadataService metadataService,
+							RestTemplate restTemplate,
 							JsonToStringConverter jsonToStringConverter,
 							RedisUtils defaultRedisUtils) {
 		this.webClient = webClient;
 		this.metadataService = metadataService;
+		this.restTemplate = restTemplate;
 		this.jsonToStringConverter = jsonToStringConverter;
 		this.defaultRedisUtils = defaultRedisUtils;
 	}
@@ -58,27 +60,31 @@ public class MainCacheService {
 		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
 
 		try {
-			// URI 구성
-			UriComponentsBuilder builder = URIUtils.uriComponentsBuilder(path, queryString);
-			URI uri = builder.build().toUri();
+			// 전체 URL 구성
+			String fullUrl = UriComponentsBuilder.fromHttpUrl(mainServerUrl)
+					.path(path)
+					.queryParams(queryString)
+					.build()
+					.toUriString();
 
 			// HttpEntity 구성 (헤더 포함)
 			HttpHeaders requestHeaders = new HttpHeaders();
-			requestHeaders.addAll(headers);
-			HttpEntity<String> requestEntity = new HttpEntity<>(null, requestHeaders);
+			if (headers != null) {
+				requestHeaders.addAll(headers);
+			}
+			HttpEntity<?> requestEntity = new HttpEntity<>(null, requestHeaders);
 
 			// RestTemplate을 사용하여 요청 전송
 			ResponseEntity<String> response = restTemplate.exchange(
-					uri,
+					fullUrl,
 					HttpMethod.GET,
 					requestEntity,
 					String.class
 			);
 
-			// 응답을 그대로 반환
 			return response;
 
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			log.error("메인서버 요청 중 오류 발생", e);
 			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
@@ -153,29 +159,37 @@ public class MainCacheService {
 	 * @param body        Requestbody
 	 */
 	public ResponseEntity<String> postMainPathData(String path, MultiValueMap<String, String> queryString,
-		Map<String, String> body, MultiValueMap<String, String> headers) {
+												   Map<String, String> body, MultiValueMap<String, String> headers) {
+
+		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
 
 		try {
-			ResponseEntity<String> response = webClient.post()
-				.uri(URIUtils.uriComponentsBuilder(path, queryString).build().toUri())
-				.bodyValue(body)
-				.headers(header -> header.addAll(headers))
-				.retrieve()
-				.toEntity(String.class)
-				.block();
+			// 전체 URL 구성
+			String fullUrl = UriComponentsBuilder.fromHttpUrl(mainServerUrl)
+					.path(path)
+					.queryParams(queryString)
+					.build()
+					.toUriString();
 
-			//TRANSFER_ENCODING 헤더 제거
-			HttpHeaders modifiedHeaders = new HttpHeaders();
-			modifiedHeaders.addAll(response.getHeaders());
-			modifiedHeaders.remove(HttpHeaders.TRANSFER_ENCODING);
+			// HttpEntity 구성 (헤더 포함)
+			HttpHeaders requestHeaders = new HttpHeaders();
+			if (headers != null) {
+				requestHeaders.addAll(headers);
+			}
+			HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
 
-			ResponseEntity<String> modifiedResponse = ResponseEntity
-				.status(response.getStatusCode())
-				.headers(modifiedHeaders)
-				.body(response.getBody());
+			// RestTemplate을 사용하여 요청 전송
+			ResponseEntity<String> response = restTemplate.exchange(
+					fullUrl,
+					HttpMethod.POST,
+					requestEntity,
+					String.class
+			);
 
-			return modifiedResponse;
-		} catch (BaseException e) {
+			return response;
+
+		} catch (Exception e) {
+			log.error("메인서버 요청 중 오류 발생", e);
 			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
 	}
@@ -187,28 +201,37 @@ public class MainCacheService {
 	 * @param queryString 요청 queryString
 	 */
 	public ResponseEntity<String> deleteMainPathData(String path, MultiValueMap<String, String> queryString,
-		MultiValueMap<String, String> headers) {
+												   MultiValueMap<String, String> headers) {
+
+		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
 
 		try {
-			ResponseEntity<String> response = webClient.delete()
-				.uri(URIUtils.uriComponentsBuilder(path, queryString).build().toUri())
-				.headers(header -> header.addAll(headers))
-				.retrieve()
-				.toEntity(String.class)
-				.block();
+			// 전체 URL 구성
+			String fullUrl = UriComponentsBuilder.fromHttpUrl(mainServerUrl)
+					.path(path)
+					.queryParams(queryString)
+					.build()
+					.toUriString();
 
-			//TRANSFER_ENCODING 헤더 제거
-			HttpHeaders modifiedHeaders = new HttpHeaders();
-			modifiedHeaders.addAll(response.getHeaders());
-			modifiedHeaders.remove(HttpHeaders.TRANSFER_ENCODING);
+			// HttpEntity 구성 (헤더 포함)
+			HttpHeaders requestHeaders = new HttpHeaders();
+			if (headers != null) {
+				requestHeaders.addAll(headers);
+			}
+			HttpEntity<?> requestEntity = new HttpEntity<>(null, requestHeaders);
 
-			ResponseEntity<String> modifiedResponse = ResponseEntity
-				.status(response.getStatusCode())
-				.headers(modifiedHeaders)
-				.body(response.getBody());
+			// RestTemplate을 사용하여 요청 전송
+			ResponseEntity<String> response = restTemplate.exchange(
+					fullUrl,
+					HttpMethod.DELETE,
+					requestEntity,
+					String.class
+			);
 
-			return modifiedResponse;
-		} catch (BaseException e) {
+			return response;
+
+		} catch (Exception e) {
+			log.error("메인서버 요청 중 오류 발생", e);
 			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
 	}
@@ -221,28 +244,37 @@ public class MainCacheService {
 	 * @param body        Requestbody
 	 */
 	public ResponseEntity<String> updateMainPathData(String path, MultiValueMap<String, String> queryString,
-		Map<String, String> body, MultiValueMap<String, String> headers) {
+												   Map<String, String> body, MultiValueMap<String, String> headers) {
+
+		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
+
 		try {
-			ResponseEntity<String> response = webClient.put()
-				.uri(URIUtils.uriComponentsBuilder(path, queryString).build().toUri())
-				.bodyValue(body)
-				.headers(header -> header.addAll(headers))
-				.retrieve()
-				.toEntity(String.class)
-				.block();
+			// 전체 URL 구성
+			String fullUrl = UriComponentsBuilder.fromHttpUrl(mainServerUrl)
+					.path(path)
+					.queryParams(queryString)
+					.build()
+					.toUriString();
 
-			//TRANSFER_ENCODING 헤더 제거
-			HttpHeaders modifiedHeaders = new HttpHeaders();
-			modifiedHeaders.addAll(response.getHeaders());
-			modifiedHeaders.remove(HttpHeaders.TRANSFER_ENCODING);
+			// HttpEntity 구성 (헤더 포함)
+			HttpHeaders requestHeaders = new HttpHeaders();
+			if (headers != null) {
+				requestHeaders.addAll(headers);
+			}
+			HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
 
-			ResponseEntity<String> modifiedResponse = ResponseEntity
-				.status(response.getStatusCode())
-				.headers(modifiedHeaders)
-				.body(response.getBody());
+			// RestTemplate을 사용하여 요청 전송
+			ResponseEntity<String> response = restTemplate.exchange(
+					fullUrl,
+					HttpMethod.PUT,
+					requestEntity,
+					String.class
+			);
 
-			return modifiedResponse;
-		} catch (BaseException e) {
+			return response;
+
+		} catch (Exception e) {
+			log.error("메인서버 요청 중 오류 발생", e);
 			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "메인서버 요청 중에 문제 발생");
 		}
 	}
@@ -258,11 +290,9 @@ public class MainCacheService {
 											MultiValueMap<String, String> headers) throws AdminException {
 
 		// metadata 확인, 조회
+		//TODO null 부분 예외처리, 없다면 생성이 좋을듯
 		MetadataGetResponse metadata = metadataService.findMetadataById(path);
 		log.info("2. " + metadata.getMetadataUrl());
-
-		if (metadata == null)
-			return null;
 
 		// URI 조합
 		String key = URIUtils.getResponseKey(path, queryParams);

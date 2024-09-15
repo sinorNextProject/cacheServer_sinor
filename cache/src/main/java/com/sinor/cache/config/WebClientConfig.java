@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 //TODO 해당 설정파일 인식이 안되는 오류
 public class WebClientConfig {
-	@Bean(name = "mainWebClient")
+	@Bean
 	public WebClient webClient() {
 		log.info("WebClient bean creation started");
 

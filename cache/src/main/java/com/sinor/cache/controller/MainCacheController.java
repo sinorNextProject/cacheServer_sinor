@@ -1,5 +1,7 @@
 package com.sinor.cache.controller;
 
+import com.sinor.cache.global.exception.BaseStatus;
+import com.sinor.cache.global.exception.DataResponse;
 import com.sinor.cache.model.MainCacheRequest;
 import com.sinor.cache.model.MainCacheResponse;
 import com.sinor.cache.service.MainCacheService;
@@ -32,9 +34,9 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@GetMapping("/{path}")
-	public ResponseEntity<?> getDataReadCache(@PathVariable String path,
-											  @RequestParam(required = false) MultiValueMap<String, String> queryParams,
-											  @RequestHeader MultiValueMap<String, String> headers) {
+	public ResponseEntity<DataResponse<?>> getDataReadCache(@PathVariable String path,
+															@RequestParam(required = false) MultiValueMap<String, String> queryParams,
+															@RequestHeader MultiValueMap<String, String> headers) {
 		log.info("1. " + queryParams.toString());
 		MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
 
@@ -48,12 +50,15 @@ public class MainCacheController {
 		//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
 
 		// 헤더 재조립
-		HttpHeaders header = new HttpHeaders();
+		/*HttpHeaders header = new HttpHeaders();
 		MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
 		multiValueMap.setAll(pathCache.getHeaders());
-		header.addAll(multiValueMap);
+		header.addAll(multiValueMap);*/
 
-		return ResponseEntity.status(pathCache.getStatusCodeValue()).headers(header).body(pathCache.getBody());
+		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, pathCache.getBody());
+
+		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
+		//return ResponseEntity.status(pathCache.getStatusCodeValue()).headers(header).body(pathCache.getBody());
 	}
 
 	/**
@@ -65,12 +70,15 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@PostMapping("/{path}")
-	public ResponseEntity<String> postDataReadCache(@PathVariable String path,
+	public ResponseEntity<DataResponse<?>> postDataReadCache(@PathVariable String path,
 													@RequestParam(required = false) MultiValueMap<String, String> queryParams,
 													MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers) {
 
-		return mainCacheService.postMainPathData(path, URIUtils.encodingUrl(queryParams),
-			body.getRequestBody(), headers);
+
+		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, mainCacheService.postMainPathData(path, URIUtils.encodingUrl(queryParams),
+				body.getRequestBody(), headers));
+
+		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
 	}
 
 	/**
@@ -81,10 +89,13 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@DeleteMapping("/{path}")
-	public ResponseEntity<String> deleteDataRefreshCache(@PathVariable String path,
+	public ResponseEntity<DataResponse<?>> deleteDataRefreshCache(@PathVariable String path,
 														 @RequestParam(required = false) MultiValueMap<String, String> queryParams,
 														 @RequestHeader MultiValueMap<String, String> headers) {
-		return mainCacheService.deleteMainPathData(path, URIUtils.encodingUrl(queryParams), headers);
+
+		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, mainCacheService.deleteMainPathData(path, URIUtils.encodingUrl(queryParams), headers));
+
+		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
 	}
 
 	/**
@@ -96,10 +107,15 @@ public class MainCacheController {
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
 	@PutMapping("/{path}")
-	public ResponseEntity<String> updateDataRefreshCache(@PathVariable String path,
+	public ResponseEntity<DataResponse<?>> updateDataRefreshCache(@PathVariable String path,
 														 @RequestParam(required = false) MultiValueMap<String, String> queryParams,
 														 MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers) {
-		return mainCacheService.updateMainPathData(path, URIUtils.encodingUrl(queryParams),
-			body.getRequestBody(), headers);
+
+		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, mainCacheService.updateMainPathData(path, URIUtils.encodingUrl(queryParams),
+				body.getRequestBody(), headers));
+
+		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
+
+
 	}
 }
