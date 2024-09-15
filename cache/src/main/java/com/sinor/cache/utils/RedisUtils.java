@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.sinor.cache.global.exception.BaseException;
+import com.sinor.cache.global.exception.BaseStatus;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.KeyScanOptions;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -33,11 +34,11 @@ public class RedisUtils {
 	 * @return 해당 key 값의 value (String 형태)
 	 * @throws AdminException 역 직렬화 실패 시 발생 오류
 	 */
-	public String getRedisData(String key) throws AdminException {
+	public String getRedisData(String key) throws BaseException {
 		try {
 			return redisTemplate.opsForValue().get(key);
 		} catch (NullPointerException e) {
-			throw new AdminException(CACHE_NOT_FOUND);
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, key + "에 대한 캐시가 없습니다.");
 		}
 	}
 

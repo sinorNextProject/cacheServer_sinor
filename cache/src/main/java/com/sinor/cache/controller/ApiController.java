@@ -3,6 +3,9 @@ package com.sinor.cache.controller;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.sinor.cache.global.exception.BaseStatus;
+import com.sinor.cache.global.exception.DataResponse;
 import com.sinor.cache.model.ApIGetRequest;
 import com.sinor.cache.model.ApiGetResponse;
 import com.sinor.cache.service.ApiService;
@@ -70,8 +73,20 @@ public class ApiController {
 			.replace("%3F", "?")
 			.replace("%26", "&")
 			.replace("%3D", "=");
+		
+		// key 삭제 처리
+		Boolean result = apiService.deleteCacheById(encodingKey);
+		
+		// 처리 결과에 따른 Status 설정
+		BaseStatus status;
+		if(result)
+			status = BaseStatus.OK;
+		else
+			status = BaseStatus.INTERNAL_SERVER_ERROR;
 
-		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(apiService.deleteCacheById(encodingKey));
+		// 결과 및 Status 반환
+		DataResponse<?> response = DataResponse.from(status, result);
+		return ResponseEntity.status(response.getStatus()).body(response);
 	}
 
 	/*@Override
@@ -84,6 +99,6 @@ public class ApiController {
 	public ResponseEntity<?> updateCache(ApIGetRequest request) {
 		ApiGetResponse adminResponse = apiService.updateCacheById(request.getKey(), request.getResponse());
 
-		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(adminResponse);
+		return ResponseEntity.status(BaseStatus.OK.getStatus()).body(adminResponse);
 	}
 }

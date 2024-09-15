@@ -53,7 +53,7 @@ public class MetadataService {
 	public MetadataGetResponse findMetadataById(String path) throws BaseException {
 		// 캐시 검사
 		if(!metadataRedisUtils.isExist(path))
-			throw new BaseException(BaseStatus.NOT_FOUND, path + "에 대한 Metadata를 찾을 수 없습니다.");
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, path + "에 대한 Metadata를 찾을 수 없습니다.");
 
 		// 캐시 호출 및 역직렬화
 		Metadata cacheMetadata = jsonToStringConverter.jsontoClass(metadataRedisUtils.getRedisData(path),
