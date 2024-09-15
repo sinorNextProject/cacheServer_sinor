@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sinor.cache.notuse.ResponseStatus;
 import com.sinor.cache.notuse.SuccessResponse;
 
+import javax.xml.crypto.Data;
+
 @RestController
 public class ApiController {
 	// 해당 컨트롤러의 API 구조는 캐시의 Key 값에 의해 수정될 필요가 있음
@@ -36,7 +38,7 @@ public class ApiController {
 	 */
 
 	@GetMapping("/admin/cache")
-	public ResponseEntity<SuccessResponse<?>> getCache(String key) {
+	public ResponseEntity<DataResponse<?>> getCache(String key) {
 
 		//TODO 인코딩된 부분을 해결하기 위해 작성(개선 필요)
 		String encodingKey = URLEncoder.encode(key, StandardCharsets.UTF_8)
@@ -44,29 +46,17 @@ public class ApiController {
 			.replace("%26", "&")
 			.replace("%3D", "=");
 
-		SuccessResponse<?> adminResponse = SuccessResponse.from(ResponseStatus.SUCCESS,
+		DataResponse<?> adminResponse = DataResponse.from(BaseStatus.OK,
 			apiService.findCacheById(encodingKey));
-		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(adminResponse);
+		return ResponseEntity.status(adminResponse.getStatus()).body(adminResponse);
 	}
-
-	/**
-	 * URL 별 캐시 목록 조회
-	 * @param url 조회할 캐시들의 공통 url 값
-	 */
-
-	/*@Override
-	public ResponseEntity<SuccessResponse<?>> getCacheListByKeyParams(String url) {
-		SuccessResponse<?> adminResponse = SuccessResponse.from(ResponseStatus.SUCCESS,
-			apiService.findCacheList(url));
-		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body(adminResponse);
-	}*/
 
 	/**
 	 * 단일 캐시 삭제
 	 * @param key 삭제할 캐시의 key 값
 	 */
 	@DeleteMapping("/admin/cache")
-	public ResponseEntity<?> deleteCache(String key) {
+	public ResponseEntity<DataResponse<?>> deleteCache(String key) {
 
 		//TODO 인코딩된 부분을 해결하기 위해 작성(개선 필요)
 		String encodingKey = URLEncoder.encode(key, StandardCharsets.UTF_8)
@@ -89,16 +79,9 @@ public class ApiController {
 		return ResponseEntity.status(response.getStatus()).body(response);
 	}
 
-	/*@Override
-	public ResponseEntity<?> deleteCacheList(String url) {
-		apiService.deleteCacheList(url);
-		return ResponseEntity.status(ResponseStatus.SUCCESS.getCode()).body("삭제 성공");
-	}*/
-
 	@PutMapping("/admin/cache")
-	public ResponseEntity<?> updateCache(ApIGetRequest request) {
-		ApiGetResponse adminResponse = apiService.updateCacheById(request.getKey(), request.getResponse());
-
-		return ResponseEntity.status(BaseStatus.OK.getStatus()).body(adminResponse);
+	public ResponseEntity<DataResponse<?>> updateCache(ApIGetRequest request) {
+		DataResponse<?> adminResponse = apiService.updateCacheById(request.getKey(), request.getResponse());
+		return ResponseEntity.status(adminResponse.getStatus()).body(adminResponse);
 	}
 }

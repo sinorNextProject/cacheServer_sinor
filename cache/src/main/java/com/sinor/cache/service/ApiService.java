@@ -2,6 +2,7 @@ package com.sinor.cache.service;
 
 import com.sinor.cache.global.exception.BaseException;
 import com.sinor.cache.global.exception.BaseStatus;
+import com.sinor.cache.global.exception.DataResponse;
 import com.sinor.cache.model.ApiGetResponse;
 import com.sinor.cache.model.MetadataGetResponse;
 import com.sinor.cache.notuse.admin.AdminException;
@@ -38,10 +39,10 @@ public class ApiService {
 	 * 캐시 조회
 	 * @param key 조회할 캐시의 Key 값
 	 */
-	public ApiGetResponse findCacheById(String key) throws BaseException {
+	public DataResponse<?> findCacheById(String key) throws BaseException {
 		String value = defaultRedisUtils.getRedisData(key);
 
-		return jsonToStringConverter.jsontoClass(value, ApiGetResponse.class);
+		return jsonToStringConverter.jsontoClass(value, DataResponse.class);
 	}
 
 	/**
@@ -69,11 +70,10 @@ public class ApiService {
 	 * @param expiredTime 생성할 캐시의 만료시간
 	 */
 	@Transactional
-	public ApiGetResponse saveOrUpdate(String key, String value, Long expiredTime) throws BaseException {
+	public DataResponse<?> saveOrUpdate(String key, String value, Long expiredTime) throws BaseException {
 		// 캐시에 저장된 값이 있으면 수정, 없으면 생성
 		defaultRedisUtils.setRedisData(key, value, expiredTime);
-
-		return jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key), ApiGetResponse.class);
+		return jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key), DataResponse.class);
 	}
 
 	/**
@@ -107,18 +107,19 @@ public class ApiService {
 	 * @return 수정된 결과값
 	 */
 	//TODO Redis에서 업데이트 확인, 출력을 위한 역직렬화 과정에서 오류 발생(response의 형식이 너무 까다로움)
-	public ApiGetResponse updateCacheById(String key, String response) {
-		// path 추출, 해당 path의 metadata 조회
-		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));
-
+	public DataResponse<?> updateCacheById(String key, String response) {
 		// 해당 캐시가 없으면 에러 반환
 		if (!defaultRedisUtils.isExist(key))
 			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "수정하려는 캐시가 없습니다.");
+
+		// path 추출, 해당 path의 metadata 조회
+		MetadataGetResponse metadata = metadataService.findMetadataById(defaultRedisUtils.disuniteKey(key));
 		
 		// 추출한 Metadata ttl 값으로 캐시 데이터와 변경
 		defaultRedisUtils.setRedisData(key, response, metadata.getMetadataTtlSecond());
+
 		// 변경한 데이터를 추출하여 ApiGetResponse 반환
-		return jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key), ApiGetResponse.class);
+		return jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key), DataResponse.class);
 	}
 
 	/**
