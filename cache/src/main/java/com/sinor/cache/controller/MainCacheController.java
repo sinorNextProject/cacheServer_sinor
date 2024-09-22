@@ -38,7 +38,7 @@ public class MainCacheController {
 	 * @param queryParams 요청에 전달된 queryString
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
-	@GetMapping("/{path}")
+	@GetMapping("/{path:^(?!actuator).*}")
 	public ResponseEntity<DataResponse<?>> getDataReadCache(@PathVariable String path,
 															@RequestParam(required = false) MultiValueMap<String, String> queryParams,
 															@RequestHeader MultiValueMap<String, String> headers) {

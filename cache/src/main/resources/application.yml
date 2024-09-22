@@ -23,6 +23,7 @@ spring:
     data:
       host: redisHost
       port: 6379
+      timeout: 1000
 
   jpa:
     hibernate:
@@ -60,3 +61,13 @@ springdoc:
 main:
   server:
     url: http://mainHost:8080
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: "/manage"
+      exposure:
+        include: "health,info"

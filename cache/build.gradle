@@ -65,6 +65,9 @@ dependencies {
     // LocalDate, LocalDateTime을 직렬화, 역직렬화 하기 위한 Dependency 11/27 [에이디]
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+    //actuator 추가 24/09/22 에이디
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     // 2차 캐시(포기)
     /*implementation 'javax.cache:cache-api:1.1.1'
     implementation 'org.ehcache:ehcache:3.8.1'*/

@@ -36,6 +36,8 @@ dependencies {
     implementation 'io.github.noobdogcloud:HttpClient:0.0.1'
     implementation 'com.github.jalasoft:HttpClient:1.0.5'
     implementation 'com.github.jalasoft:HttpClient:1.0.5'
+    //actuator 추가 24/09/22 에이디
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 //    implementation project(path: ':')
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

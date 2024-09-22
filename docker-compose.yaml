@@ -58,8 +58,8 @@ services:
     healthcheck: # https://stackoverflow.com/questions/67904609/how-do-you-perform-a-healthcheck-in-the-redis-docker-image
       test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       interval: 1s
-      timeout: 3s
-      retries: 5
+      timeout: 1s
+      retries: 3
     volumes:
       - cache-redis_db-data:/var/lib/redis
       - ./redis.conf:/usr/local/etc/redis/redis.conf

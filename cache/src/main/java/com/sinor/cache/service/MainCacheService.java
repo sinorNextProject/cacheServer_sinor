@@ -12,10 +12,7 @@ import com.sinor.cache.model.MainCacheResponse;
 import com.sinor.cache.model.MetadataGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -56,6 +53,32 @@ public class MainCacheService {
 		this.restTemplate = restTemplate;
 		this.jsonToStringConverter = jsonToStringConverter;
 		this.defaultRedisUtils = defaultRedisUtils;
+	}
+
+	public ResponseEntity<?> headMainPathData(String path, MultiValueMap<String, String> queryString){
+		log.info("메인 서버로 HEAD 요청 전송.");
+		try{
+			String fullUrl = UriComponentsBuilder.fromHttpUrl(mainServerUrl)
+					.path(path)
+					.queryParams(queryString)
+					.build().toUriString();
+
+			HttpHeaders headers = new HttpHeaders();
+
+			HttpEntity<?> requestEntity = new HttpEntity<>(null, headers);
+
+			ResponseEntity<String> response = restTemplate.exchange(
+					fullUrl,
+					HttpMethod.HEAD,
+					requestEntity,
+					String.class
+			);
+
+			return response;
+		}catch (Exception e){
+			log.info("메인 서버 HEAD 요청 중 문제 발생.");
+			throw new BaseException(BaseStatus.INTERNAL_SERVER_ERROR, "HEAD 요청 에러 발생.");
+		}
 	}
 
 	public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
