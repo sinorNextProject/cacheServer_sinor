@@ -15,11 +15,16 @@ import com.sinor.cache.utils.URIUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 //TODO logback-spring.xml파일에 UTF-8설정을 해주었지만 한글 출력X,도커와 관련된 문제가 아닐까 추측
 @Slf4j
 @RestController
 public class MainCacheController {
 
+	private final ConcurrentHashMap<String, Lock> locks = new ConcurrentHashMap<>();
 	private final MainCacheService mainCacheService;
 
 	public MainCacheController(MainCacheService mainCacheService) {
@@ -37,27 +42,41 @@ public class MainCacheController {
 	public ResponseEntity<DataResponse<?>> getDataReadCache(@PathVariable String path,
 															@RequestParam(required = false) MultiValueMap<String, String> queryParams,
 															@RequestHeader MultiValueMap<String, String> headers) {
-		log.info("1. " + queryParams.toString());
-		MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
+		// path, queryString 연결, key 반환
+		String key = URIUtils.queryStringConcatenateToPath(path, queryParams);
 
-		MainCacheResponse pathCache = mainCacheService.getDataInCache(path, encodedQueryParams, headers);
+		// key 잠금
+		log.info(key + " 잠금.");
+		Lock getLock = locks.computeIfAbsent(path, k -> new ReentrantLock());
+		getLock.lock();
+		try {
+			log.info("1. " + queryParams.toString());
+			MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
 
-		// 메인 요청 및 캐시 생성
-		if (pathCache == null)
-			pathCache = mainCacheService.postInCache(path, encodedQueryParams, headers);
+			MainCacheResponse pathCache = mainCacheService.getDataInCache(path, encodedQueryParams, headers);
 
-		//TODO niginx.conf에 설정해두어서 원래 clientIp가 출력되야 하는데, null값 출력
-		//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
+			// 메인 요청 및 캐시 생성
+			if (pathCache == null)
+				pathCache = mainCacheService.postInCache(path, encodedQueryParams, headers);
 
-		// 헤더 재조립
-		/*HttpHeaders header = new HttpHeaders();
-		MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-		multiValueMap.setAll(pathCache.getHeaders());
-		header.addAll(multiValueMap);*/
+			//TODO niginx.conf에 설정해두어서 원래 clientIp가 출력되야 하는데, null값 출력
+			//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
 
-		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, pathCache.getBody());
+			// 헤더 재조립
+			/*HttpHeaders header = new HttpHeaders();
+			MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+			multiValueMap.setAll(pathCache.getHeaders());
+			header.addAll(multiValueMap);*/
 
-		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
+			DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, pathCache.getBody());
+
+			return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
+		}finally {
+			// key 잠금 해제
+			getLock.unlock();
+			locks.remove(key);
+			log.info(key + " 잠금 해제.");
+		}
 		//return ResponseEntity.status(pathCache.getStatusCodeValue()).headers(header).body(pathCache.getBody());
 	}
 

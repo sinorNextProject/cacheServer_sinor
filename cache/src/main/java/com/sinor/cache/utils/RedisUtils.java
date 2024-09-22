@@ -61,12 +61,12 @@ public class RedisUtils {
 	}
 
 	/**
-	 * 만료 시간 기본 10분 캐시 저장
-	 * @param key
-	 * @param value
+	 * 만료 시간 없이 캐시 저장
+	 * @param key 저장할 캐시 key
+	 * @param value 저장할 캐시 value
 	 */
 	public void setRedisData(String key, String value) {
-		redisTemplate.opsForValue().set(key, value, 10L, TimeUnit.MINUTES);
+		redisTemplate.opsForValue().set(key, value);
 	}
 
 	/**

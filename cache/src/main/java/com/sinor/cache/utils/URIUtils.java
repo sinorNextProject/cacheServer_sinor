@@ -12,15 +12,22 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class URIUtils {
 
-	public static UriComponentsBuilder uriComponentsBuilder(String path, MultiValueMap<String, String> queryParams) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://mainHost:8080/");
-		builder.path(path);
+	/**
+	 * Path와 queryParams를 합쳐서 하나의 문자열을 반환
+	 * @param path uri path
+	 * @param queryParams uri queryString
+	 * @return path와 queryString을 연결한 문자열
+	 */
+	public static String queryStringConcatenateToPath(String path, MultiValueMap<String, String> queryParams) {
+		// UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://mainHost:8080/");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path);
 
 		if (queryParams != null)
 			builder.queryParams(queryParams);
 
-		return builder;
+		return builder.toUriString();
 	}
+
 	/*public static UriComponentsBuilder uriComponentsBuilder(String path, MultiValueMap<String, String> queryParams) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path);
 		if (queryParams != null) {

@@ -1,6 +1,9 @@
 package com.sinor.cache.service;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.sinor.cache.global.exception.BaseException;
 import com.sinor.cache.global.exception.BaseStatus;
@@ -58,7 +61,7 @@ public class MainCacheService {
 	public ResponseEntity<String> getMainPathData(String path, MultiValueMap<String, String> queryString,
 												  MultiValueMap<String, String> headers) {
 		log.info("메인서버로 전송 - Path: {}, QueryString: {}", path, queryString);
-
+		// 요청 실행
 		try {
 			// 전체 URL 구성
 			String fullUrl = UriComponentsBuilder.fromHttpUrl(mainServerUrl)
