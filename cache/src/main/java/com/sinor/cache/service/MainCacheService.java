@@ -321,13 +321,9 @@ public class MainCacheService {
 		log.info("2. " + metadata.getMetadataUrl());
 
 		// URI 조합
-		String key = URIUtils.getResponseKey(path, queryParams);
+		String key = URIUtils.queryStringConcatenateToPath(path, queryParams);
 
 		log.info("3. " + key);
-
-		// response 확인
-		if (!defaultRedisUtils.isExist(key))
-			return null;
 
 		// response 조회
 		ApiGetResponse cachedData = jsonToStringConverter.jsontoClass(defaultRedisUtils.getRedisData(key),
@@ -367,5 +363,14 @@ public class MainCacheService {
 
 		// Response만 반환
 		return mainCacheResponse;
+	}
+
+	/**
+	 * Redis에 Main Data 유무 확인
+	 * @param key 찾으려는 Main key
+	 * @return true or false
+	 */
+	public boolean isExist(String key){
+		return defaultRedisUtils.isExist(key);
 	}
 }

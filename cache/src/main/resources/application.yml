@@ -63,8 +63,12 @@ main:
     url: http://mainHost:8080
 
 management:
+  health:
+    db:
+      enabled: false
+    redis:
+      enabled: false
   endpoint:
-    health:
       show-details: always
   endpoints:
     web:

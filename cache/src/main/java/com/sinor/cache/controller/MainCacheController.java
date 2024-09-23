@@ -38,45 +38,48 @@ public class MainCacheController {
 	 * @param queryParams 요청에 전달된 queryString
 	 * @apiNote <a href="https://www.baeldung.com/spring-request-response-body#@requestbody">reference</a>
 	 */
+	// TODO 캐시에 있는 데이터르 조회할 때는 굳이 락을 걸 필요가 없는데....
 	@GetMapping("/{path:^(?!actuator).*}")
 	public ResponseEntity<DataResponse<?>> getDataReadCache(@PathVariable String path,
 															@RequestParam(required = false) MultiValueMap<String, String> queryParams,
 															@RequestHeader MultiValueMap<String, String> headers) {
-		// path, queryString 연결, key 반환
+		// path, queryString 연결, 한글 인코딩
 		String key = URIUtils.queryStringConcatenateToPath(path, queryParams);
+		MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
+		
+		// 캐시 유무 확인
+		log.info("getDataReadCache key 조회 : " + key);
+		boolean isExist = mainCacheService.isExist(key);
+
+		// 반환 Response, Lock
+		MainCacheResponse pathCache;
+		Lock getLock = locks.computeIfAbsent(path, k -> new ReentrantLock());
 
 		// key 잠금
-		log.info(key + " 잠금.");
-		Lock getLock = locks.computeIfAbsent(path, k -> new ReentrantLock());
+		log.info(key + " 없음. Lock 잠금.");
 		getLock.lock();
-		try {
-			log.info("1. " + queryParams.toString());
-			MultiValueMap<String, String> encodedQueryParams = URIUtils.encodingUrl(queryParams);
 
-			MainCacheResponse pathCache = mainCacheService.getDataInCache(path, encodedQueryParams, headers);
-
+		// 캐시 없으면 메인 요청 Post
+		if(!isExist){
 			// 메인 요청 및 캐시 생성
-			if (pathCache == null)
-				pathCache = mainCacheService.postInCache(path, encodedQueryParams, headers);
-
-			//TODO niginx.conf에 설정해두어서 원래 clientIp가 출력되야 하는데, null값 출력
-			//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
-
-			// 헤더 재조립
-			/*HttpHeaders header = new HttpHeaders();
-			MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-			multiValueMap.setAll(pathCache.getHeaders());
-			header.addAll(multiValueMap);*/
-
-			DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, pathCache.getBody());
-
-			return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
-		}finally {
+			pathCache = mainCacheService.postInCache(path, encodedQueryParams, headers);
+		}else{
 			// key 잠금 해제
 			getLock.unlock();
 			locks.remove(key);
 			log.info(key + " 잠금 해제.");
+
+			// 있으면 조회 및 반환
+			log.info(key + " 있음.");
+			pathCache = mainCacheService.getDataInCache(path, encodedQueryParams, headers);
 		}
+
+		//TODO niginx.conf에 설정해두어서 원래 clientIp가 출력되야 하는데, null값 출력
+		//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
+
+		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, pathCache.getBody());
+
+		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
 		//return ResponseEntity.status(pathCache.getStatusCodeValue()).headers(header).body(pathCache.getBody());
 	}
 
