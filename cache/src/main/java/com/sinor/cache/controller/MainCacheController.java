@@ -95,11 +95,14 @@ public class MainCacheController {
 	public ResponseEntity<DataResponse<?>> postDataReadCache(@PathVariable String path,
 													@RequestParam(required = false) MultiValueMap<String, String> queryParams,
 													MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers) {
-
+		String key = URIUtils.queryStringConcatenateToPath(path, queryParams);
+		Lock lock = locks.computeIfAbsent(key, k -> new ReentrantLock());
+		lock.lock();
 
 		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, mainCacheService.postMainPathData(path, URIUtils.encodingUrl(queryParams),
 				body.getRequestBody(), headers));
 
+		lock.unlock();
 		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
 	}
 
@@ -132,12 +135,14 @@ public class MainCacheController {
 	public ResponseEntity<DataResponse<?>> updateDataRefreshCache(@PathVariable String path,
 														 @RequestParam(required = false) MultiValueMap<String, String> queryParams,
 														 MainCacheRequest body, @RequestHeader MultiValueMap<String, String> headers) {
+		String key = URIUtils.queryStringConcatenateToPath(path, queryParams);
+		Lock lock = locks.computeIfAbsent(key, k -> new ReentrantLock());
+		lock.lock();
 
 		DataResponse<?> cacheResponse = DataResponse.from(BaseStatus.OK, mainCacheService.updateMainPathData(path, URIUtils.encodingUrl(queryParams),
 				body.getRequestBody(), headers));
 
+		lock.unlock();
 		return ResponseEntity.status(cacheResponse.getStatus()).body(cacheResponse);
-
-
 	}
 }
