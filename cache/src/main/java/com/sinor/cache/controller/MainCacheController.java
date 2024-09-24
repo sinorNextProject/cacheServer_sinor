@@ -56,23 +56,19 @@ public class MainCacheController {
 		Lock getLock = locks.computeIfAbsent(path, k -> new ReentrantLock());
 
 		// key 잠금
-		log.info(key + " 없음. Lock 잠금.");
+		log.info(key + " Lock 잠금.");
 		getLock.lock();
 
 		// 캐시 없으면 메인 요청 Post
-		if(!isExist){
-			// 메인 요청 및 캐시 생성
+		if(!isExist)
 			pathCache = mainCacheService.postInCache(path, encodedQueryParams, headers);
-		}else{
-			// key 잠금 해제
-			getLock.unlock();
-			locks.remove(key);
-			log.info(key + " 잠금 해제.");
-
-			// 있으면 조회 및 반환
-			log.info(key + " 있음.");
+		else
 			pathCache = mainCacheService.getDataInCache(path, encodedQueryParams, headers);
-		}
+
+		// key 잠금 해제
+		getLock.unlock();
+		locks.remove(key);
+		log.info(key + " 잠금 해제.");
 
 		//TODO niginx.conf에 설정해두어서 원래 clientIp가 출력되야 하는데, null값 출력
 		//log.info("request info: ip={}\n body={}", headers.getFirst("X-Forwarded-For"), pathCache.getBody());
